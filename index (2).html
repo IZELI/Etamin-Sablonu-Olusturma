@@ -1,0 +1,2264 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>İlmek — etamin şablon atölyesi</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<script>
+/* =====================================================================
+   GOOGLE HESABI İLE SENKRON (Firebase)
+   Firebase konsolunda web uygulaması eklerken verilen firebaseConfig
+   nesnesini aşağıdaki null yerine yapıştır. Örnek:
+   window.FIREBASE_CONFIG = {
+     apiKey: "AIza...", authDomain: "projen.firebaseapp.com",
+     projectId: "projen", storageBucket: "projen.appspot.com",
+     messagingSenderId: "123", appId: "1:123:web:abc"
+   };
+   Boş (null) kalırsa çalışmalar yalnızca bu tarayıcıda saklanır.
+   ===================================================================== */
+window.FIREBASE_CONFIG = {
+  apiKey: "AIzaSyB5Wpo05Y-dvO0vlWaDDDAzL_Qlxijitag",
+  authDomain: "etamin-6f872.firebaseapp.com",
+  projectId: "etamin-6f872",
+  storageBucket: "etamin-6f872.firebasestorage.app",
+  messagingSenderId: "1043915282988",
+  appId: "1:1043915282988:web:2a0437bd39051e8ce9cf89"
+};
+</script>
+<style>
+:root{
+  --bg:#EEF0EC; --surface:#FFFFFF; --surface-2:#F6F7F4; --ink:#1A2136; --muted:#5D6476; --line:#D8DBE0;
+  --accent:#A3243A; --accent-ink:#FFFFFF; --accent-soft:#F6E3E6; --ok:#2F6B4F; --canvas:#E4E6E1; --shadow:0 1px 0 rgba(26,33,54,.06),0 8px 24px -12px rgba(26,33,54,.25);
+  color-scheme:light;
+  box-sizing:border-box; padding-top:env(safe-area-inset-top,0px); padding-bottom:env(safe-area-inset-bottom,0px);
+}
+@media (prefers-color-scheme:dark){ :root:not([data-theme="light"]){
+  --bg:#10131A; --surface:#181C26; --surface-2:#1E2330; --ink:#E6E8EE; --muted:#99A0AF; --line:#2B3140;
+  --accent:#E35A71; --accent-ink:#1A0B0F; --accent-soft:#3A1E26; --ok:#6FC39A; --canvas:#0C0E13; --shadow:0 1px 0 rgba(0,0,0,.3),0 10px 30px -14px rgba(0,0,0,.7);
+  color-scheme:dark; } }
+:root[data-theme="dark"]{
+  --bg:#10131A; --surface:#181C26; --surface-2:#1E2330; --ink:#E6E8EE; --muted:#99A0AF; --line:#2B3140;
+  --accent:#E35A71; --accent-ink:#1A0B0F; --accent-soft:#3A1E26; --ok:#6FC39A; --canvas:#0C0E13; --shadow:0 1px 0 rgba(0,0,0,.3),0 10px 30px -14px rgba(0,0,0,.7);
+  color-scheme:dark; }
+*,*::before,*::after{box-sizing:border-box}
+html{scroll-padding-top:env(safe-area-inset-top,0px);height:100%}
+body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.5 "IBM Plex Sans",system-ui,-apple-system,"Segoe UI",sans-serif;min-height:100%}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:50;background:var(--surface)}
+h1,h2,h3{font-family:"Bricolage Grotesque","IBM Plex Sans",system-ui,sans-serif;font-weight:700;letter-spacing:-.01em;margin:0}
+button,input,select{font:inherit;color:inherit}
+button{cursor:pointer}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.hidden{display:none!important}
+.muted{color:var(--muted)}
+.small{font-size:13px}
+
+/* header */
+.top{position:sticky;top:env(safe-area-inset-top,0px);z-index:40;background:var(--surface);border-bottom:1px solid var(--line);display:flex;align-items:center;gap:16px;padding:10px 20px;min-height:58px}
+.brand{display:flex;align-items:center;gap:10px;font-family:"Bricolage Grotesque",system-ui,sans-serif;font-weight:700;font-size:20px;background:none;border:0;padding:0}
+.brand svg{width:30px;height:30px;flex:none}
+.top nav{display:flex;gap:6px;margin-left:auto;align-items:center}
+.sync{font-size:12.5px;color:var(--muted);display:flex;align-items:center;gap:6px;white-space:nowrap}
+.sync i{width:8px;height:8px;border-radius:50%;background:var(--muted);display:inline-block}
+.sync.on i{background:var(--ok)} .sync.busy i{background:#C8941B} .sync.off i{background:var(--accent)}
+
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;border:1px solid var(--line);background:var(--surface);border-radius:8px;padding:8px 14px;font-weight:500;min-height:38px;white-space:nowrap}
+.btn:hover{border-color:var(--muted)}
+.btn.primary{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
+.btn.primary:hover{filter:brightness(1.06)}
+.btn.ghost{border-color:transparent;background:transparent}
+.btn.danger{color:var(--accent)}
+.btn:disabled{opacity:.5;cursor:default}
+
+main{max-width:1240px;margin:0 auto;padding:28px 20px 60px}
+main.wide{max-width:none;padding:0}
+
+.acct{display:flex;align-items:center;gap:8px}
+.avatar{width:34px;height:34px;border-radius:50%;border:1px solid var(--line);background:var(--accent-soft);color:var(--accent);font-weight:700;display:inline-flex;align-items:center;justify-content:center;overflow:hidden;padding:0}
+.avatar img{width:100%;height:100%;object-fit:cover}
+.gbtn svg{width:18px;height:18px}
+.advice{border:1px solid var(--line);border-radius:10px;padding:12px;background:var(--surface-2);margin-bottom:14px;display:grid;gap:8px}
+.advice .fabs{display:flex;flex-wrap:wrap;gap:6px}
+.qual{display:inline-flex;align-items:center;gap:6px;font-size:12.5px;font-weight:600;border-radius:999px;padding:2px 10px;border:1px solid var(--line);background:var(--surface)}
+.qual i{width:8px;height:8px;border-radius:50%;display:inline-block}
+.qual.good i{background:var(--ok)} .qual.mid i{background:#C8941B} .qual.low i{background:var(--accent)}
+/* list */
+.list-head{display:flex;align-items:end;justify-content:space-between;gap:16px;margin-bottom:22px;flex-wrap:wrap}
+.list-head h1{font-size:clamp(28px,4vw,40px);line-height:1.1}
+.list-head p{margin:6px 0 0;color:var(--muted);max-width:60ch}
+.cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:18px}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:12px;overflow:hidden;display:flex;flex-direction:column;text-align:left;padding:0;transition:border-color .15s}
+.card:hover{border-color:var(--muted)}
+.card .thumb{aspect-ratio:4/3;background:var(--canvas);display:flex;align-items:center;justify-content:center;overflow:hidden}
+.card .thumb img{max-width:88%;max-height:88%;image-rendering:pixelated;box-shadow:0 2px 10px rgba(0,0,0,.18)}
+.card .body{padding:12px 14px 14px;display:grid;gap:6px}
+.card h3{font-size:17px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.bar{height:6px;border-radius:3px;background:var(--surface-2);overflow:hidden;border:1px solid var(--line)}
+.bar>i{display:block;height:100%;background:var(--accent)}
+.empty{border:1.5px dashed var(--line);border-radius:14px;padding:48px 24px;text-align:center;display:grid;gap:12px;justify-items:center;background:var(--surface)}
+.empty svg{width:88px;height:88px}
+
+/* new */
+.new-grid{display:grid;grid-template-columns:minmax(300px,400px) 1fr;gap:24px;align-items:start}
+.panel{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:18px}
+.panel+.panel{margin-top:14px}
+.panel h2{font-size:18px;margin-bottom:12px}
+.field{display:grid;gap:5px;margin-bottom:14px}
+.field>label,.lbl{font-size:13px;font-weight:600}
+.field .hint{font-size:12.5px;color:var(--muted)}
+input[type=text],input[type=number],select{border:1px solid var(--line);background:var(--surface-2);border-radius:8px;padding:8px 10px;min-height:38px;width:100%}
+input[type=range]{width:100%;accent-color:var(--accent)}
+input[type=checkbox]{accent-color:var(--accent);width:18px;height:18px}
+.row{display:flex;gap:10px;align-items:center}
+.row>*{flex:1}
+.row>.nogrow{flex:none}
+.seg{display:flex;border:1px solid var(--line);border-radius:9px;padding:3px;background:var(--surface-2);gap:3px}
+.seg button{flex:1;border:0;background:transparent;border-radius:6px;padding:6px 8px;font-size:13.5px;font-weight:500;min-height:32px}
+.seg button.on{background:var(--surface);box-shadow:0 1px 2px rgba(0,0,0,.15);color:var(--accent)}
+.check{display:flex;gap:10px;align-items:flex-start;margin-bottom:12px;font-size:14px}
+.check input{margin-top:2px;flex:none}
+.drop{border:1.5px dashed var(--line);border-radius:12px;padding:28px 18px;text-align:center;display:grid;gap:8px;justify-items:center;background:var(--surface-2);cursor:pointer}
+.drop.over{border-color:var(--accent);background:var(--accent-soft)}
+.src-preview{display:flex;gap:12px;align-items:center}
+.src-preview img{width:64px;height:64px;object-fit:cover;border-radius:8px;border:1px solid var(--line)}
+.preview-wrap{position:sticky;top:calc(env(safe-area-inset-top,0px) + 74px)}
+.preview-stage{background:var(--canvas);border-radius:12px;border:1px solid var(--line);display:flex;align-items:center;justify-content:center;min-height:360px;padding:16px;position:relative;overflow:auto}
+.preview-stage canvas{max-width:100%;height:auto;box-shadow:0 2px 14px rgba(0,0,0,.2)}
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(--line);border:1px solid var(--line);border-radius:10px;overflow:hidden;margin-top:14px}
+.stats>div{background:var(--surface);padding:10px 12px}
+.stats b{display:block;font-family:"Bricolage Grotesque",system-ui,sans-serif;font-size:19px;font-weight:700}
+.stats span{font-size:12.5px;color:var(--muted)}
+.suggest{display:flex;gap:8px;align-items:center;font-size:13px;color:var(--muted);flex-wrap:wrap}
+.chip{border:1px solid var(--line);background:var(--surface-2);border-radius:999px;padding:3px 10px;font-size:12.5px;font-weight:500}
+button.chip:hover{border-color:var(--accent);color:var(--accent)}
+.warn{background:var(--accent-soft);color:var(--ink);border-radius:8px;padding:8px 12px;font-size:13px;margin-top:10px}
+.busy-dot{position:absolute;top:12px;right:12px;font-size:12.5px;background:var(--surface);padding:4px 10px;border-radius:999px;border:1px solid var(--line)}
+.pal-mini{display:flex;flex-wrap:wrap;gap:4px;margin-top:12px}
+.pal-mini i{width:18px;height:18px;border-radius:4px;border:1px solid rgba(0,0,0,.15);display:block}
+
+/* work */
+.work{display:grid;grid-template-columns:1fr 360px;height:calc(100dvh - 58px - env(safe-area-inset-top,0px) - env(safe-area-inset-bottom,0px));min-height:520px}
+.stage{display:flex;flex-direction:column;min-width:0;min-height:0}
+.toolbar{display:flex;gap:8px;align-items:center;padding:8px 12px;border-bottom:1px solid var(--line);background:var(--surface);flex-wrap:wrap}
+.toolbar .title{font-family:"Bricolage Grotesque",system-ui,sans-serif;font-weight:700;font-size:17px;margin-right:6px;max-width:28ch;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.tools{display:flex;gap:2px;border:1px solid var(--line);border-radius:9px;padding:2px;background:var(--surface-2)}
+.tools button{border:0;background:transparent;border-radius:6px;width:36px;height:34px;display:inline-flex;align-items:center;justify-content:center;color:var(--muted)}
+.tools button svg{width:19px;height:19px}
+.tools button.on{background:var(--surface);color:var(--accent);box-shadow:0 1px 2px rgba(0,0,0,.15)}
+.tools button:hover{color:var(--ink)}
+.sep{width:1px;height:26px;background:var(--line);margin:0 2px}
+.canvas-wrap{position:relative;flex:1;min-height:0;background:var(--canvas);overflow:hidden}
+.canvas-wrap canvas{position:absolute;inset:0;width:100%;height:100%;touch-action:none;display:block}
+.hud{position:absolute;left:12px;bottom:12px;background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:4px 10px;font-size:12.5px;pointer-events:none;box-shadow:var(--shadow)}
+.zoom{position:absolute;right:12px;bottom:12px;display:flex;flex-direction:column;gap:6px}
+.zoom button{width:38px;height:38px;border-radius:8px;border:1px solid var(--line);background:var(--surface);font-size:18px;box-shadow:var(--shadow)}
+.side{border-left:1px solid var(--line);background:var(--surface);display:flex;flex-direction:column;min-height:0}
+.tabs{display:flex;border-bottom:1px solid var(--line)}
+.tabs button{flex:1;border:0;background:none;padding:12px 6px;font-weight:600;font-size:14px;color:var(--muted);border-bottom:2px solid transparent}
+.tabs button.on{color:var(--ink);border-bottom-color:var(--accent)}
+.tabbody{overflow:auto;flex:1;padding:14px}
+.legend{display:grid;gap:2px}
+.lg{display:grid;grid-template-columns:34px 1fr auto;gap:10px;align-items:center;padding:6px 8px;border-radius:8px;border:1px solid transparent;background:none;text-align:left;width:100%}
+.lg:hover{background:var(--surface-2)}
+.lg.sel{border-color:var(--accent);background:var(--accent-soft)}
+.sw{width:34px;height:34px;border-radius:6px;border:1px solid rgba(0,0,0,.18);display:flex;align-items:center;justify-content:center;font-size:17px;font-weight:600;position:relative;overflow:hidden}
+.lg .nm{min-width:0}
+.lg .nm b{font-size:14px;display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.lg .nm span{font-size:12px;color:var(--muted);display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.lg .nm span.tag{display:inline;font-size:10.5px;vertical-align:1px}
+.lg .ct{font-size:12px;color:var(--muted);text-align:right;min-width:62px}
+.lg .ct .bar{height:4px;margin-top:4px}
+.tag{font-size:11px;font-weight:600;border-radius:4px;padding:0 5px;border:1px solid var(--line);color:var(--muted);margin-left:4px}
+.big-pct{font-family:"Bricolage Grotesque",system-ui,sans-serif;font-size:56px;font-weight:700;line-height:1;letter-spacing:-.03em}
+.kv{display:grid;grid-template-columns:auto 1fr;gap:6px 14px;font-size:14px;margin:0}
+.kv dt{color:var(--muted)} .kv dd{margin:0;text-align:right;font-weight:500}
+.section{padding:14px 0;border-top:1px solid var(--line)}
+.section:first-child{border-top:0;padding-top:0}
+.section h3{font-size:15px;margin-bottom:10px}
+.stack{display:grid;gap:8px}
+table.mat{width:100%;border-collapse:collapse;font-size:13px}
+table.mat td,table.mat th{padding:5px 4px;border-bottom:1px solid var(--line);text-align:left}
+table.mat th{color:var(--muted);font-weight:600;font-size:12px}
+table.mat td.r,table.mat th.r{text-align:right}
+.edit-bar{display:flex;gap:6px;flex-wrap:wrap;align-items:center;margin-bottom:10px}
+
+/* modal */
+.modal{position:fixed;inset:0;background:rgba(10,12,18,.5);z-index:100;display:flex;align-items:center;justify-content:center;padding:20px}
+.dialog{background:var(--surface);border-radius:14px;max-width:520px;width:100%;max-height:min(86dvh,720px);display:flex;flex-direction:column;box-shadow:0 20px 60px rgba(0,0,0,.35);border:1px solid var(--line)}
+.dialog header{padding:16px 18px 8px}
+.dialog .dbody{padding:4px 18px;overflow:auto;flex:1}
+.dialog footer{padding:12px 18px 16px;display:flex;gap:8px;justify-content:flex-end;flex-wrap:wrap}
+.thread-list{display:grid;gap:2px;max-height:300px;overflow:auto;border:1px solid var(--line);border-radius:8px;padding:4px;margin-top:8px}
+.thread-list button{display:flex;gap:10px;align-items:center;border:0;background:none;padding:5px 8px;border-radius:6px;text-align:left;font-size:13.5px}
+.thread-list button:hover{background:var(--surface-2)}
+.thread-list button.on{background:var(--accent-soft)}
+.thread-list i{width:22px;height:22px;border-radius:4px;border:1px solid rgba(0,0,0,.18);flex:none}
+.toast{position:fixed;left:50%;bottom:calc(20px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--ink);color:var(--surface);padding:10px 16px;border-radius:10px;font-size:14px;z-index:120;max-width:90vw;box-shadow:var(--shadow)}
+
+
+/* tam ekran */
+body.fs{overflow:hidden}
+body.fs .top{display:none}
+body.fs main.wide{position:fixed;inset:0;z-index:60;background:var(--bg)}
+body.fs .work{height:100%;min-height:0;grid-template-columns:1fr;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+body.fs .stage{height:100%;min-height:0}
+body.fs .toolbar .title{display:none}
+body.fs .side{position:fixed;right:0;top:0;bottom:0;width:min(360px,88vw);z-index:70;transform:translateX(102%);transition:transform .2s ease;visibility:hidden;border-left:1px solid var(--line);border-top:0;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+body.fs.legend-open .side{transform:none;visibility:visible;box-shadow:-10px 0 30px rgba(0,0,0,.25)}
+body.fs .side .tabbody{overflow:auto}
+.fs-only{display:none!important}
+body.fs .fs-only{display:inline-flex!important}
+.icon-btn svg{width:18px;height:18px}
+.pdf-prog{height:8px;border-radius:4px;background:var(--surface-2);border:1px solid var(--line);overflow:hidden;margin-top:10px}
+.pdf-prog i{display:block;height:100%;width:0;background:var(--accent);transition:width .15s}
+
+@media (max-width:900px){
+  .stats{grid-template-columns:repeat(2,1fr)}
+  .new-grid{grid-template-columns:1fr}
+  .preview-wrap{position:static}
+  .work{grid-template-columns:1fr;height:auto}
+  .stage{height:68dvh;min-height:420px}
+  .side{border-left:0;border-top:1px solid var(--line)}
+  .tabbody{overflow:visible}
+  .top{padding:8px 12px;gap:10px}
+  .sync span{display:none}
+  .toolbar .title{max-width:100%;flex-basis:100%}
+}
+@media (max-width:600px){.gbtn span{display:none}.gbtn{padding:8px 10px}}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+</head>
+<body>
+<header class="top">
+  <button class="brand" id="homeBtn" aria-label="Çalışmalarım">
+    <svg viewBox="0 0 30 30" aria-hidden="true"><rect x="0.5" y="0.5" width="29" height="29" rx="6" fill="var(--accent)"/><g stroke="var(--accent-ink)" stroke-width="2.6" stroke-linecap="round"><path d="M7 7l7 7M14 7l-7 7"/><path d="M16 16l7 7M23 16l-7 7"/></g><g stroke="var(--accent-ink)" stroke-width="2.6" stroke-linecap="round" opacity=".45"><path d="M16 7l7 7"/><path d="M7 16l7 7"/></g></svg>
+    İlmek
+  </button>
+  <nav>
+    <div class="sync" id="sync"><i></i><span>Bağlanıyor…</span></div>
+    <div class="acct" id="acct"></div>
+    <button class="btn primary" id="newBtn">Yeni şablon</button>
+  </nav>
+</header>
+
+<!-- LIST -->
+<main id="vList">
+  <div class="list-head">
+    <div>
+      <h1>Çalışmalarım</h1>
+      <p>Her şablonun ilerlemesi ayrı tutulur. Aynı bağlantıyı başka bir cihazda açtığında kaldığın yerden devam edersin.</p>
+    </div>
+  </div>
+  <div id="cards" class="cards"></div>
+  <div id="emptyList" class="empty hidden">
+    <svg viewBox="0 0 88 88" aria-hidden="true"><g fill="none" stroke="var(--line)" stroke-width="1.5"><path d="M4 4h80v80H4z"/><path d="M4 24h80M4 44h80M4 64h80M24 4v80M44 4v80M64 4v80"/></g><g stroke="var(--accent)" stroke-width="4" stroke-linecap="round"><path d="M28 28l12 12M40 28L28 40"/><path d="M48 48l12 12M60 48L48 60"/><path d="M48 28l12 12M60 28L48 40"/></g></svg>
+    <h2>İlk şablonunu oluştur</h2>
+    <p class="muted" style="margin:0;max-width:44ch">Bir fotoğraf ya da çizim yükle; kumaşı, ölçüyü ve renk sayısını seç, şemayı hemen işlemeye başla.</p>
+    <button class="btn primary" id="emptyNew">Resim yükle</button>
+  </div>
+</main>
+
+<!-- NEW / REVISE -->
+<main id="vNew" class="hidden">
+  <div class="list-head">
+    <div><h1 id="newTitle">Yeni şablon</h1><p id="newSub">Resmi yükle, ayarları değiştirdikçe önizleme güncellenir.</p></div>
+    <div class="row nogrow" style="flex:none;gap:8px"><button class="btn" id="newCancel">Vazgeç</button><button class="btn primary" id="saveBtn" disabled>Şablonu oluştur</button></div>
+  </div>
+  <div class="new-grid">
+    <div>
+      <section class="panel">
+        <h2>Resim</h2>
+        <label class="drop" id="drop">
+          <input type="file" id="file" accept="image/*" hidden>
+          <svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="9" cy="9" r="2"/><path d="M21 15l-5-5L5 21"/></svg>
+          <b>Resim seç ya da buraya bırak</b>
+          <span class="small muted">JPG, PNG, WEBP. Şeffaf alanlar boş kumaş olarak kalır.</span>
+        </label>
+        <div class="src-preview hidden" id="srcInfo"><img id="srcThumb" alt="Yüklenen resim"><div><b id="srcName"></b><div class="small muted" id="srcDim"></div><button class="btn ghost small" id="srcChange" style="padding:4px 0;min-height:0">Resmi değiştir</button></div></div>
+        <div class="field" style="margin-top:14px"><label for="pName">Çalışmanın adı</label><input type="text" id="pName" maxlength="60" placeholder="Örneğin: Lavanta tarlası"></div>
+      </section>
+
+      <section class="panel" id="setPanel">
+        <h2>Kumaş ve ölçü</h2>
+        <div class="field"><label for="fabric">Kumaş</label>
+          <select id="fabric"></select>
+          <div class="row hidden" id="customFab"><input type="number" id="fabCount" min="6" max="40" step="1" value="14" aria-label="Sayım (ct)"><label class="check nogrow" style="margin:0;align-items:center"><input type="checkbox" id="fabOver2"> 2 iplik üzeri</label></div>
+        </div>
+        <div class="field"><label>Kumaş rengi</label>
+          <div class="row"><select id="fabColorSel"></select><input type="color" id="fabColor" class="nogrow" style="width:44px;height:38px;border:1px solid var(--line);border-radius:8px;padding:2px;background:var(--surface-2)" aria-label="Özel kumaş rengi"></div>
+        </div>
+        <div class="field"><label>Şema ölçeği</label>
+          <div class="seg" id="ratioSeg"><button data-v="1" class="on">1:1</button><button data-v="4">1:4</button></div>
+          <span class="hint" id="ratioHint">Her kare tek bir haç ilmeğidir.</span>
+        </div>
+        <div class="advice hidden" id="advice"></div>
+        <div class="field"><label>Bitmiş işin genişliği</label>
+          <div class="row"><div><input type="number" id="wCm" min="2" max="200" step="0.5" value="20" aria-label="Genişlik (cm)"><span class="hint">cm</span></div><div><input type="number" id="wSt" min="10" max="1200" step="1" aria-label="Genişlik (ilmek)"><span class="hint">ilmek (haç)</span></div></div>
+          <span class="hint" id="hInfo"></span><span id="qualNow"></span>
+        </div>
+        <div class="field"><label for="margin">Kenar payı (her yönden)</label>
+          <div class="row"><input type="range" id="margin" min="2" max="12" step="1" value="5"><span class="nogrow small" id="marginV" style="min-width:44px;text-align:right">5 cm</span></div>
+        </div>
+      </section>
+
+      <section class="panel">
+        <h2>Renkler</h2>
+        <div class="field"><label for="colors">Renk sayısı</label>
+          <div class="row"><input type="range" id="colors" min="2" max="80" value="24"><span class="nogrow" style="min-width:34px;text-align:right;font-weight:600" id="colorsV">24</span></div>
+          <div class="suggest" id="suggest"><span>Önerilen hesaplanıyor…</span></div>
+        </div>
+        <label class="check"><input type="checkbox" id="blend" checked><span><b>İki rengi karıştır</b><br><span class="muted small">Tam karşılığı olmayan tonlar için iğneye iki farklı renkten birer tel takılır.</span></span></label>
+        <label class="check"><input type="checkbox" id="dither"><span><b>Geçişleri yumuşat</b><br><span class="muted small">Fotoğraflarda gölge geçişleri daha doğal görünür, tekli ilmek sayısı artar.</span></span></label>
+        <div class="field"><label>Tekli ilmek temizliği</label>
+          <div class="seg" id="cleanSeg"><button data-v="0">Kapalı</button><button data-v="1" class="on">Hafif</button><button data-v="2">Güçlü</button></div>
+        </div>
+        <label class="check"><input type="checkbox" id="bgEmpty"><span><b>Arka planı boş bırak</b><br><span class="muted small">Kenarlara değen baskın renk işlenmez, kumaş görünür.</span></span></label>
+        <div class="field"><label>Ton ayarı</label>
+          <div class="row small"><span class="nogrow" style="width:70px">Kontrast</span><input type="range" id="adjC" min="-40" max="40" value="0"></div>
+          <div class="row small"><span class="nogrow" style="width:70px">Doygunluk</span><input type="range" id="adjS" min="-50" max="50" value="0"></div>
+          <div class="row small"><span class="nogrow" style="width:70px">Parlaklık</span><input type="range" id="adjB" min="-40" max="40" value="0"></div>
+        </div>
+      </section>
+
+      <section class="panel">
+        <h2>İlmek türleri</h2>
+        <div class="field"><label>İlmek kararı</label>
+          <div class="seg" id="modeSeg"><button data-v="auto" class="on">Otomatik</button><button data-v="manual">Elle seçeceğim</button></div>
+          <span class="hint" id="modeHint"></span>
+        </div>
+        <div id="autoOpts">
+          <label class="check"><input type="checkbox" id="aHalf" checked><span><b>Yarım haç</b><br><span class="muted small">Arka plan, gökyüzü, su gibi düz ve kumaşa yakın tonlu alanlar.</span></span></label>
+          <div class="field" id="halfAmtF" style="margin:-4px 0 14px 28px"><div class="seg" id="halfSeg"><button data-v="0">Az</button><button data-v="1" class="on">Orta</button><button data-v="2">Çok</button></div></div>
+          <label class="check"><input type="checkbox" id="aBack" checked><span><b>Backstitch</b><br><span class="muted small">Kareye sığmayan ince çizgiler: dal, sap, kirpik, bıyık, ince yazı.</span></span></label>
+          <label class="check"><input type="checkbox" id="aKnot" checked><span><b>Fransız düğümü</b><br><span class="muted small">Göz parıltısı, çiçek ortası, yıldız gibi tek noktalık ayrıntılar.</span></span></label>
+          <div class="warn hidden" id="autoSum" style="background:var(--surface-2);margin:0 0 4px"></div>
+        </div>
+        <div id="manualOpts" class="hidden">
+          <div class="field"><label>Ana dolgu</label>
+            <div class="seg" id="stitchSeg"><button data-v="x" class="on">Tam haç (cross)</button><button data-v="h">Yarım haç (half)</button></div>
+            <span class="hint">Sonradan renk bazında da değiştirebilirsin.</span>
+          </div>
+          <label class="check"><input type="checkbox" id="autoBack"><span><b>Otomatik kontur (backstitch)</b><br><span class="muted small">Belirgin renk sınırlarına kontur çizer.</span></span></label>
+          <div id="backOpts" class="hidden">
+            <div class="field"><label for="backThr">Kontur hassasiyeti</label><input type="range" id="backThr" min="15" max="70" value="40"><span class="hint">Sağa çektikçe daha fazla sınıra kontur eklenir.</span></div>
+            <div class="field"><label for="backColor">Kontur rengi</label><select id="backColor"><option value="dark">Şemadaki en koyu renk</option><option value="310">DMC 310 Siyah</option><option value="3371">DMC 3371 Siyah kahve</option><option value="3799">DMC 3799 Koyu gri</option><option value="Blanc">DMC Blanc Beyaz</option></select></div>
+          </div>
+        </div>
+        <p class="small muted" style="margin:8px 0 0">Her kararı şema açıldıktan sonra Düzenle araçlarıyla değiştirebilir, elle backstitch ve düğüm ekleyebilirsin.</p>
+      </section>
+    </div>
+
+    <div class="preview-wrap">
+      <div class="seg" id="pvSeg" style="max-width:360px;margin-bottom:10px"><button data-v="final" class="on">İşlenmiş hali</button><button data-v="sym">Şema</button><button data-v="src">Orijinal</button></div>
+      <div class="preview-stage" id="pvStage"><canvas id="pv" width="10" height="10"></canvas><span class="busy-dot hidden" id="pvBusy">Hesaplanıyor…</span><span class="muted" id="pvEmpty">Önizleme için bir resim yükle.</span></div>
+      <div class="stats" id="stats"></div>
+      <div class="pal-mini" id="palMini"></div>
+      <div id="warnBox"></div>
+    </div>
+  </div>
+</main>
+
+<!-- WORK -->
+<main id="vWork" class="wide hidden">
+  <div class="work">
+    <div class="stage">
+      <div class="toolbar">
+        <span class="title" id="wTitle"></span>
+        <div class="tools" id="trackTools" role="group" aria-label="Takip araçları">
+          <button data-t="pan" title="Gezin (sürükle)" aria-label="Gezin"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v20M2 12h20M12 2l-3 3M12 2l3 3M12 22l-3-3M12 22l3-3M2 12l3-3M2 12l3 3M22 12l-3-3M22 12l-3 3"/></svg></button>
+          <button data-t="mark" title="İşaretle: dokun ya da sürükle" aria-label="İşaretle"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="3" width="18" height="18" rx="2" stroke-width="1.6"/><path d="M8 8l8 8M16 8l-8 8"/></svg></button>
+          <button data-t="fill" title="Aynı renkli bitişik alanı işaretle" aria-label="Alanı işaretle"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"><path d="M4 12l7-7 8 8-7 7z"/><path d="M19 15c1 1.5 2 2.7 2 3.7a2 2 0 0 1-4 0c0-1 1-2.2 2-3.7z" fill="currentColor"/></svg></button>
+        </div>
+        <div class="tools hidden" id="editTools" role="group" aria-label="Düzenleme araçları">
+          <button data-t="pen" title="Kalem: seçili renkle boya" aria-label="Kalem"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20l4-1 11-11-3-3L5 16z"/></svg></button>
+          <button data-t="erase" title="Silgi: ilmeği kaldır" aria-label="Silgi"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"><path d="M8 20h12M5 15l9-9 5 5-8 8H8z"/></svg></button>
+          <button data-t="back" title="Backstitch: noktadan noktaya sürükle; çizgiye dokunarak sil" aria-label="Backstitch"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M4 18l5-5 4 3 7-9"/><circle cx="4" cy="18" r="1.6" fill="currentColor"/><circle cx="20" cy="7" r="1.6" fill="currentColor"/></svg></button>
+          <button data-t="knot" title="Fransız düğümü: köşe noktasına dokun" aria-label="Fransız düğümü"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="5" fill="currentColor"/><circle cx="12" cy="12" r="8.5" stroke-dasharray="2 2.4"/></svg></button>
+          <button data-t="pick" title="Damlalık: şemadan renk seç" aria-label="Damlalık"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14 4l6 6M17 7l-10 10-4 1 1-4 10-10"/></svg></button>
+        </div>
+        <button class="btn" id="editToggle" title="Şemayı düzenle">Düzenle</button>
+        <button class="btn ghost" id="undoBtn" title="Geri al (Ctrl+Z)" aria-label="Geri al"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 14L4 9l5-5"/><path d="M4 9h10a6 6 0 0 1 0 12h-3"/></svg></button>
+        <button class="btn icon-btn fs-only" id="legendBtn" title="Renk listesini aç">Renkler</button>
+        <button class="btn icon-btn" id="fsBtn" title="Tam ekran" aria-label="Tam ekran"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/></svg></button>
+        <select id="viewMode" style="width:auto;min-width:150px" aria-label="Görünüm">
+          <option value="sym">Simge + renk tonu</option>
+          <option value="col">Renkli</option>
+          <option value="real">İlerleme (gerçekçi)</option>
+          <option value="final">Bitmiş hali</option>
+        </select>
+      </div>
+      <div class="canvas-wrap" id="cWrap">
+        <canvas id="cv"></canvas>
+        <div class="hud" id="hud"></div>
+        <div class="zoom"><button id="zIn" aria-label="Yakınlaştır">+</button><button id="zOut" aria-label="Uzaklaştır">−</button><button id="zFit" aria-label="Sığdır" style="font-size:13px">⤢</button></div>
+      </div>
+    </div>
+    <aside class="side">
+      <div class="tabs" role="tablist"><button data-tab="colors" class="on">Renkler</button><button data-tab="prog">İlerleme</button><button data-tab="info">Detay</button></div>
+      <div class="tabbody" id="tabColors">
+        <div class="edit-bar hidden" id="palEdit"><button class="btn" id="addColor">Renk ekle</button><button class="btn" id="chgColor" disabled>Rengi değiştir</button><button class="btn" id="mergeColor" disabled>Birleştir…</button></div>
+        <label class="check small" style="margin-bottom:8px"><input type="checkbox" id="hiOnly"> Sadece seçili rengi vurgula</label>
+        <div class="legend" id="legend"></div>
+      </div>
+      <div class="tabbody hidden" id="tabProg"></div>
+      <div class="tabbody hidden" id="tabInfo"></div>
+    </aside>
+  </div>
+</main>
+
+<div id="modalRoot"></div>
+<script>
+const DMC_RAW="Ecru|Ecru/off-white|fff7e7;315|Antique Mauve - MED DK|7d4246;Blanc|White|fcfbf8;316|Antique Mauve - MED|bc757f;B5200|Snow White|fcfcff;317|Pewter Gray|6d6469;White|White|ffffff;318|Steel Gray - LT|999b9d;150|Red - BRIGHT|cf0053;319|Pistachio Green - VY DK|3a553b;151|Pink|ffcbd7;320|Pistachio Green - MED|608c59;152|Tawny - DK|e1a1a1;321|Red|bd1136;153|Lilac|eac5eb;322|Baby Blue|3a609d;154|Red - VY DK|4b233a;326|Rose - VY DK|ac1c37;155|Forget-me-not Blue|9774b6;327|Violet|5e0f77;156|Blue - MED|8577b4;333|Blue Violet - VY DK|6e2e9b;157|Blue - LT|b5b8ea;334|Baby Blue - MED|6085b8;158|Blue - DK|393068;335|Rose|d63d57;159|Petrol Blue - LT|bcb5de;336|Blue|0c275e;160|Petrol Blue - MED|8178a9;340|Blue Violet - MED|996dc3;161|Petrol Blue - DK|60568b;341|Blue Violet - LT|a39ad7;162|Baby Blue - LT|cae7f0;347|Salmon - VY DK|ab1b33;163|Green|557a60;349|Coral - DK|c62c38;164|Green - LT|bae4b6;350|Coral - MED|de3f40;165|Green - BRIGHT|e1f477;351|Coral|ed625b;166|Lime Green|adc238;352|Coral - LT|f78372;167|Khaki Brown|855d31;353|Peach|fdb4a1;168|Silver Gray|b1aeb7;355|Terra Cotta - DK|97382b;169|Pewter Gray|827d7d;356|Terra Cotta - MED|be5c4b;208|Lavender - VY DK|9442a7;367|Pistachio Green - DK|446b45;209|Lavender - DK|ba72c6;368|Pistachio Green - LT|7fc66d;210|Lavender - MED|d49fe1;369|Pistachio Green - VY LT|cdefa6;211|Lavender - LT|e5bded;370|Mustard - MED|917245;221|Shell Pink - VY DK|792631;371|Mustard|9f8352;223|Shell Pink - LT|bb6864;372|Mustard - LT|ad9564;224|Shell Pink - VY LT|e2a598;400|Mahogany - DK|813718;225|Shell Pink - ULT VY LT|f8d9cd;402|Mahogany - VY LT|ef9e74;300|Mahogany - VY DK|6c3116;407|Desert Sand - DK|b77159;301|Mahogany - MED|aa5237;413|Pewter Gray - DK|4a4749;304|Red - MED|a10c39;414|Steel Gray - DK|766e72;307|Lemon|fde949;415|Pearl Gray|b8b9bd;309|Rose - DK|ba2044;420|Hazelnut Brown - DK|855a30;310|Black|000000;422|Hazelnut Brown - LT|c99a67;311|Blue - MED|002a64;433|Brown - MED|73421e;312|Baby Blue - VY DK|1f3279;434|Brown - LT|8f5332;435|Brown - VY LT|a96538;600|Cranberry - VY DK|bf1c48;436|Tan|c78559;601|Cranberry - DK|c62a53;437|Tan - LT|daa26f;602|Cranberry - MED|d63f68;444|Lemon - DK|f5bc13;603|Cranberry|ed5d84;445|Lemon - LT|fcf999;604|Cranberry - LT|f793b2;451|Shell Gray - DK|887773;605|Cranberry - VY LT|fbacc4;452|Shell Gray - MED|ad9994;606|Orange-red - BRIGHT|f70f00;453|Shell Gray - LT|ccb8aa;608|Orange - BRIGHT|fd480c;469|Avocado Green|5b6533;610|Drab Brown - DK|6b5039;470|Avocado Green - LT|72813e;611|Drab Brown|7c5f46;471|Avocado Green - VY LT|9eb357;612|Drab Brown - LT|a6885e;472|Avocado Green - ULT LT|d1de75;613|Drab Brown - VY LT|b99f72;498|Red - DK|970b2c;632|Desert Sand - ULT VY DK|7f4232;500|Blue Green - VY DK|1d362a;640|Beige Gray - VY DK|817868;501|Blue Green - DK|2f5446;642|Beige Gray - DK|958d79;502|Blue Green|57826e;644|Beige Gray - MED|c4bea6;503|Blue Green - MED|89b89f;645|Beaver Gray - VY DK|5d5d54;504|Blue Green - VY LT|acdac1;646|Beaver Gray - DK|6b6860;505|Grass Green - DK|ceddc1;647|Beaver Gray - MED|908e85;517|Wedgewood - DK|216285;648|Beaver Gray - LT|a7a69f;518|Wedgewood - LT|50819c;666|Red - BRIGHT|ce1b33;519|Sky Blue|94b7cb;676|Old Gold - LT|ecbf7d;520|Fern Green - DK|384526;677|Old Gold - VY LT|f2dc9f;522|Fern Green|808b6e;680|Old Gold - DK|b07b46;523|Fern Green - LT|959f7a;699|Green|075b26;524|Fern Green - VY LT|aea78e;700|Green - BRIGHT|076c34;535|Ash Gray - VY LT|4b4b49;701|Green - LT|217c36;543|Beige Brown - ULT VY LT|ead0b5;702|Kelly Green|379130;550|Violet - VY DK|580e5c;703|Chartreuse|63b330;552|Violet - MED|902f99;704|Chartreuse - BRIGHT|88c53a;553|Violet|a449ac;712|Cream|f6efda;554|Violet - LT|dc9cde;718|Plum|cb2089;561|Jade - VY DK|285e48;720|Orange Spice - DK|c83a24;562|Jade - MED|3b8c5a;721|Orange Spice - MED|f46440;563|Jade - LT|6ed39a;722|Orange Spice - LT|f98756;564|Jade - VY LT|95e4af;725|Topaz|f9c15b;580|Moss Green - DK|355f0b;726|Topaz - LT|fddb63;581|Moss Green|838a29;727|Topaz - VY LT|fde98b;597|Turquoise|52adab;728|Golden Yellow|f2ae3f;598|Turquoise - LT|97d8d3;729|Old Gold - MED|ce9657;730|Olive Green - VY DK|63520b;803|Blue - DEEP|202754;731|Olive Green - DK|6b580b;806|Peacock Blue - DK|1d6c87;732|Olive Green|725c0c;807|Peacock Blue|558b9e;733|Olive Green - MED|a78a44;809|Delft Blue|919fd5;734|Olive Green - LT|bb9c54;813|Blue - LT|7fa0c6;738|Tan - VY LT|e2b783;814|Garnet - DK|711033;739|Tan - ULT VY LT|f2deb9;815|Garnet - MED|800b34;740|Tangerine|fd6f1a;816|Garnet|921238;741|Tangerine - MED|fc8b10;817|Coral Red - VY DK|bb1630;742|Tangerine - LT|fdae3c;818|Baby Pink|fededd;743|Yellow - MED|fdd769;819|Baby Pink - LT|fcebde;744|Yellow - PALE|fee88d;820|Royal Blue - VY DK|151264;745|Yellow - LT PALE|feeba5;822|Beige Gray - LT|e8dfc7;746|Off White|faf2d5;823|Blue - DK|000b44;747|Sky Blue - VY LT|cee9ea;824|Blue - VY DK|284779;754|Peach - LT|f7c9b0;825|Blue - DK|34588f;758|Terra Cotta - VY LT|e99f83;826|Blue - MED|5075a7;760|Salmon|ec8880;827|Blue - VY LT|a4c1de;761|Salmon - LT|f8b4ad;828|Blue - ULT VY LT|c3d7e6;762|Pearl Gray - VY LT|d1d0d2;829|Golden Olive - VY DK|64480c;772|Yellow Green - VY LT|d7efa7;830|Golden Olive - DK|6e501d;775|Baby Blue - VY LT|d4e3ef;831|Golden Olive - MED|7c5f20;776|Pink - MED|fca8ad;832|Golden Olive|9c7230;777|Red - DEEP|9b0042;833|Golden Olive - LT|b99956;778|Antique Mauve - VY LT|dca6a4;834|Golden Olive - VY LT|d2b468;779|Brown|53332d;838|Beige Brown - VY DK|4a3021;780|Topaz - ULT VY DK|945026;839|Beige Brown - DK|5a3c2d;781|Topaz - VY DK|a25f1f;840|Beige Brown - MED|7a5939;782|Topaz - DK|b26923;841|Beige Brown - LT|a37d64;783|Topaz - MED|d0883d;842|Beige Brown - VY LT|cbb094;791|Cornflower Blue - VY DK|2d2068;844|Beaver Gray - ULT DK|494842;792|Cornflower Blue - DK|454b8b;868|Hazel Nut Brown|995c30;793|Cornflower Blue - MED|7c82b5;869|Hazelnut Brown - VY DK|784c28;794|Cornflower Blue - LT|a0b2d7;890|Pistachio Green - ULT DK|324233;796|Royal Blue - DK|272276;891|Carnation - DK|ee3246;797|Royal Blue|2b3288;892|Carnation - MED|f44753;798|Delft Blue - DK|4e5ca7;893|Carnation - LT|f66879;799|Delft Blue - MED|6b7fc0;894|Carnation - VY LT|fd95a3;800|Delft Blue - PALE|b5c7e9;895|Hunter Green - VY DK|344b2e;801|Coffee Brown - DK|60391d;898|Coffee Brown - VY DK|532f1b;899|Rose - MED|ea6b78;955|Nile Green - LT|a8ebad;900|Burnt Orange - DK|c63117;956|Geranium|f7566d;902|Garnet - VY DK|651329;957|Geranium - PALE|fd99af;904|Parrot Green - VY DK|386324;958|Seagreen - DK|0db294;905|Parrot Green - DK|467924;959|Seagreen - MED|72d0b7;906|Parrot Green - MED|6c9e29;961|Dusty Rose - DK|de586c;907|Parrot Green - LT|9dc72d;962|Dusty Rose - MED|eb7183;909|Emerald Green - VY DK|106b43;963|Dusty Rose - ULT VY LT|fdccd1;910|Emerald Green - DK|10814e;964|Seagreen - LT|a5e4d4;911|Emerald Green - MED|109256;966|Baby Green - MED|94d28a;912|Emerald Green - LT|36b26b;967|Peach - LT|ffc2ac;913|Nile Green - MED|55ca7d;970|Pumpkin - LT|fb6721;915|Plum - DK|95085a;971|Pumpkin|fc670d;917|Plum - MED|ac1071;972|Canary - DEEP|fb9f11;918|Red Copper - DK|883630;973|Canary - BRIGHT|fccd2d;919|Red Copper|9b371b;975|Golden Brown - DK|813c11;920|Copper - MED|ab4836;976|Golden Brown - MED|cf7532;921|Copper|c0573d;977|Golden Brown - LT|ec8f43;922|Copper - LT|dd6e4c;986|Forest Green - VY DK|2e5230;924|Gray Green - VY DK|384a4a;987|Forest Green - DK|436838;926|Gray Green - MED|617674;988|Forest Green - MED|66924a;927|Gray Green - LT|9fa8a5;989|Forest Green|71a74e;928|Gray Green - VY LT|c0c6c0;991|Aquamarine - DK|135f55;930|Antique Blue - DK|495c6b;992|Aquamarine - LT|42b59e;931|Antique Blue - MED|667684;993|Aquamarine - VY LT|62d8b6;932|Antique Blue - LT|93a0af;995|Electric Blue - DK|0061b0;934|Avocado Green - BLACK|323324;996|Electric Blue - MED|49a8eb;935|Avocado Green - DK|383a2a;3011|Khaki Green - DK|655935;936|Avocado Green - VY DK|3f4227;3012|Khaki Green - MED|8b7b4e;937|Avocado Green - MED|434f2c;3013|Khaki Green - LT|afa97b;938|Coffee Brown - ULT DK|45271a;3021|Brown Gray - VY DK|50403b;939|Blue - VY DK|09092f;3022|Brown Gray - MED|848274;943|Aquamarine - MED|009a77;3023|Brown Gray - LT|a29b86;945|Tawny|f6c19a;3024|Brown Gray - VY LT|beb8ac;946|Burnt Orange - MED|ed4115;3031|Mocha Brown - VY DK|423014;947|Burnt Orange|fc4f16;3032|Mocha Brown - MED|9d8868;948|Peach - VY LT|fde6d3;3033|Mocha Brown - VY LT|dbc7ad;950|Desert Sand - LT|e5ac8d;3041|Antique Violet - MED|866a76;951|Tawny - LT|faddb6;3042|Antique Violet - LT|af98a0;954|Nile Green|6fda8a;3045|Yellow Beige - DK|af8152;3046|Yellow Beige - MED|ceb074;3731|Dusty Rose - VY DK|c34c5c;3047|Yellow Beige - LT|ead8ab;3733|Dusty Rose|ea7e86;3051|Green Gray - DK|4c4c1e;3740|Antique Violet - DK|71535d;3052|Green Gray - MED|787e5c;3743|Antique Violet - VY LT|cfc2c9;3053|Green Gray|999d75;3746|Blue Violet - DK|844ab5;3064|Desert Sand|ba7056;3747|Blue Violet - VY LT|d0c5ec;3072|Beaver Gray - VY LT|d2d2ca;3750|Antique Blue - VY DK|1d4552;3078|Golden Yellow - VY LT|fcf6b6;3752|Antique Blue - VY LT|bac9cc;3325|Baby Blue - LT|adcde7;3753|Antique Blue - ULT VY LT|d9e6ec;3326|Rose - LT|f9979c;3755|Baby Blue (?)|81a5d8;3328|Salmon - DK|be444a;3756|Baby Blue|e9f4fa;3340|Apricot - MED|fd6b4f;3760|Wedgewood - MED|467293;3341|Apricot|fd8e78;3761|Sky Blue - LT|b1d0df;3345|Hunter Green - DK|40552e;3765|Peacock Blue - VY DK|175e78;3346|Hunter Green|56743b;3766|Peacock Blue - LT|4b8aa1;3347|Yellow Green - MED|6d9646;3768|Gray Green - DK|4c605f;3348|Yellow Green - LT|bedf74;3770|Tawny - VY LT|fef1d8;3350|Dusty Rose - ULT DK|aa3949;3771|Peach - DK|e8ac9b;3354|Dusty Rose - LT|efa5ac;3772|Desert Sand - VY DK|995744;3362|Pine Green - DK|49523c;3773|Desert Sand - MED|cf866d;3363|Pine Green - MED|617451;3774|Desert Sand - VY LT|f3cfb4;3364|Pine Green|8e9b6d;3776|Mahogany - LT|c96444;3371|Black Brown|36220e;3777|Terra Cotta - VY DK|922f25;3607|Plum - LT|d94c9d;3778|Terra Cotta - LT|d2705c;3608|Plum - VY LT|ec81be;3779|Terra Cotta - ULT VY LT|f2ab95;3609|Plum - ULT LT|f6b0df;3781|Mocha Brown - DK|593f2b;3685|Mauve - VY DK|79263b;3782|Mocha Brown - LT|b69d80;3687|Mauve|b5455d;3787|Brown Gray - DK|62524c;3688|Mauve - MED|dc7c86;3790|Beige Gray - ULT DK|6d5a4b;3689|Mauve - LT|f8bbc8;3799|Pewter Gray - VY DK|39393d;3705|Melon - DK|f2494f;3801|Melon - VY DK|e4353d;3706|Melon - MED|fd6e70;3802|Antique Mauve - VY DK|672a33;3708|Melon - LT|fda0ae;3803|Mauve - DK|872a43;3712|Salmon - MED|d95d5d;3804|Cyclamen Pink - DK|ce2b63;3713|Salmon - VY LT|fdd5d0;3805|Cyclamen Pink|df3c73;3716|Dusty Rose - VY LT|fcafb9;3806|Cyclamen Pink - LT|f15a91;3721|Shell Pink - DK|933b3d;3807|Cornflower Blue|4b599e;3722|Shell Pink - MED|a04b4c;3808|Turquoise - ULT VY DK|03535c;3726|Antique Mauve - DK|95565c;3809|Turquoise - VY DK|136a75;3727|Antique Mauve - LT|da9ea6;3810|Turquoise - DK|2d8d98;3811|Turquoise - VY LT|a8e2e5;3839|Lavender Blue - MED|7a7ec5;3812|Seagreen - VY DK|07a184;3840|Lavender Blue - LT|b2bdea;3813|Blue Green - LT|86c3ab;3841|Baby Blue - PALE|d9eaf2;3814|Aquamarine|0b8673;3842|Wedgewood - DK|06506a;3815|Celadon Green - DK|437259;3843|Electric Blue|28a3de;3816|Celadon Green|60937a;3844|Bright Turquoise - DK|1f7fa0;3817|Celadon Green - LT|81c6a4;3845|Bright Turquoise - MED|2badd1;3818|Emerald Green - ULT VY DK|005d2e;3846|Bright Turquoise - LT|5eccec;3819|Moss Green - LT|ccc959;3847|Teal Green - DK|186358;3820|Straw - DK|dba53e;3848|Teal Green - MED|207e72;3821|Straw|ebbb52;3849|Teal Green - LT|35b193;3822|Straw - LT|f7d169;3850|Bright Green - DK|208b46;3823|Yellow - ULT PALE|fef5cd;3851|Bright Green - LT|61bb84;3824|Apricot - LT|fcae99;3852|Straw - VY DK|e3a730;3825|Pumpkin - PALE|fea370;3853|Autumn Gold - DK|ef8125;3826|Golden Brown|b16633;3854|Autumn Gold - MED|fbac56;3827|Golden Brown - PALE|eaa664;3855|Autumn Gold - LT|fddfa0;3828|Hazelnut Brown|aa7c43;3856|Mahogany - ULT VY LT|fdbe8e;3829|Old Gold - VY DK|a7671d;3857|Rosewood - DK|6a2f26;3830|Terra Cotta|a94138;3858|Rosewood - MED|803a32;3831|Raspberry - DK|c12b52;3859|Rosewood - LT|ba7a6c;3832|Raspberry - MED|e36370;3860|Cocoa|896362;3833|Raspberry - LT|ea8b96;3861|Cocoa - LT|ac8583;3834|Grape - DK|6a2258;3862|Mocha Beige - DK|6e492a;3835|Grape - MED|924d78;3863|Mocha Beige - MED|94725d;3836|Grape - LT|c597b9;3864|Mocha Beige - LT|c9aa92;3837|Lavender - ULT DK|8a2a8f;3865|Winter White|fffdf9;3838|Lavender Blue - DK|606bad;3866|Mocha Brown - ULT VY LT|f0e6d7";
+"use strict";
+/* ============ yardımcılar ============ */
+const $ = (s, r = document) => r.querySelector(s);
+const $$ = (s, r = document) => [...r.querySelectorAll(s)];
+const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
+const fmt = n => Math.round(n).toLocaleString("tr-TR");
+const fmt1 = n => (Math.round(n * 10) / 10).toLocaleString("tr-TR");
+const uid = () => Date.now().toString(36) + Math.random().toString(36).slice(2, 8);
+const DEVICE = uid();
+function toast(msg, ms = 2600) {
+  const t = document.createElement("div"); t.className = "toast"; t.textContent = msg;
+  document.body.appendChild(t); setTimeout(() => t.remove(), ms);
+}
+function mulberry(a) { return () => { a |= 0; a = a + 0x6D2B79F5 | 0; let t = Math.imul(a ^ a >>> 15, 1 | a); t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t; return ((t ^ t >>> 14) >>> 0) / 4294967296; }; }
+
+/* base64 */
+function u8ToB64(u8) { let s = ""; const CH = 0x8000; for (let i = 0; i < u8.length; i += CH) s += String.fromCharCode.apply(null, u8.subarray(i, i + CH)); return btoa(s); }
+function b64ToU8(b) { const s = atob(b || ""); const u = new Uint8Array(s.length); for (let i = 0; i < s.length; i++) u[i] = s.charCodeAt(i); return u; }
+function encodeCells(cells) {
+  // 0: ham, 1: RLE (değer,uzunluk) — hangisi küçükse
+  const rle = []; let i = 0;
+  while (i < cells.length) { const v = cells[i]; let n = 1; while (i + n < cells.length && cells[i + n] === v && n < 255) n++; rle.push(v, n); i += n; }
+  if (rle.length < cells.length) { const u = new Uint8Array(rle.length + 1); u[0] = 1; u.set(rle, 1); return u8ToB64(u); }
+  const u = new Uint8Array(cells.length + 1); u[0] = 0; u.set(cells, 1); return u8ToB64(u);
+}
+function decodeCells(b, n) {
+  const u = b64ToU8(b); const out = new Uint8Array(n).fill(255);
+  if (u[0] === 0) out.set(u.subarray(1, n + 1));
+  else { let p = 0; for (let i = 1; i + 1 < u.length; i += 2) { out.fill(u[i], p, p + u[i + 1]); p += u[i + 1]; } }
+  return out;
+}
+function encodeBits(arr) { const u = new Uint8Array(Math.ceil(arr.length / 8)); for (let i = 0; i < arr.length; i++) if (arr[i]) u[i >> 3] |= 1 << (i & 7); return u8ToB64(u); }
+function decodeBits(b, n) { const u = b64ToU8(b); const out = new Uint8Array(n); for (let i = 0; i < n; i++) out[i] = (u[i >> 3] >> (i & 7)) & 1; return out; }
+
+/* ============ renk bilimi ============ */
+const LIN = new Float32Array(256); for (let i = 0; i < 256; i++) { const v = i / 255; LIN[i] = v <= 0.04045 ? v / 12.92 : Math.pow((v + 0.055) / 1.055, 2.4); }
+const linf = v => { v = clamp(v, 0, 255) / 255; return v <= 0.04045 ? v / 12.92 : Math.pow((v + 0.055) / 1.055, 2.4); };
+const unlin = v => { v = v <= 0.0031308 ? 12.92 * v : 1.055 * Math.pow(v, 1 / 2.4) - 0.055; return clamp(v * 255, 0, 255); };
+const hexToRgb = h => { h = h.replace("#", ""); return [parseInt(h.slice(0, 2), 16), parseInt(h.slice(2, 4), 16), parseInt(h.slice(4, 6), 16)]; };
+const rgbToHex = c => "#" + c.map(v => Math.round(clamp(v, 0, 255)).toString(16).padStart(2, "0")).join("");
+const fLab = t => t > 0.008856 ? Math.cbrt(t) : 7.787 * t + 16 / 116;
+function linToLab(R, G, B) {
+  const x = fLab((R * 0.4124564 + G * 0.3575761 + B * 0.1804375) / 0.95047);
+  const y = fLab(R * 0.2126729 + G * 0.7151522 + B * 0.0721750);
+  const z = fLab((R * 0.0193339 + G * 0.1191920 + B * 0.9503041) / 1.08883);
+  return [116 * y - 16, 500 * (x - y), 200 * (y - z)];
+}
+const rgbToLab = c => linToLab(linf(c[0]), linf(c[1]), linf(c[2]));
+function blendRgb(a, b) { return [0, 1, 2].map(i => unlin((linf(a[i]) + linf(b[i])) / 2)); }
+function de2000(l1, l2) {
+  const [L1, a1, b1] = l1, [L2, a2, b2] = l2, rad = Math.PI / 180;
+  const C1 = Math.hypot(a1, b1), C2 = Math.hypot(a2, b2), Cm = (C1 + C2) / 2;
+  const G = 0.5 * (1 - Math.sqrt(Math.pow(Cm, 7) / (Math.pow(Cm, 7) + 6103515625)));
+  const a1p = a1 * (1 + G), a2p = a2 * (1 + G);
+  const C1p = Math.hypot(a1p, b1), C2p = Math.hypot(a2p, b2);
+  let h1p = Math.atan2(b1, a1p) / rad; if (h1p < 0) h1p += 360;
+  let h2p = Math.atan2(b2, a2p) / rad; if (h2p < 0) h2p += 360;
+  const dLp = L2 - L1, dCp = C2p - C1p;
+  let dhp = 0; if (C1p * C2p) { dhp = h2p - h1p; if (dhp > 180) dhp -= 360; else if (dhp < -180) dhp += 360; }
+  const dHp = 2 * Math.sqrt(C1p * C2p) * Math.sin(dhp * rad / 2);
+  const Lpm = (L1 + L2) / 2, Cpm = (C1p + C2p) / 2;
+  let hpm = h1p + h2p; if (C1p * C2p) { if (Math.abs(h1p - h2p) > 180) hpm += hpm < 360 ? 360 : -360; hpm /= 2; }
+  const T = 1 - 0.17 * Math.cos((hpm - 30) * rad) + 0.24 * Math.cos(2 * hpm * rad) + 0.32 * Math.cos((3 * hpm + 6) * rad) - 0.2 * Math.cos((4 * hpm - 63) * rad);
+  const dTh = 30 * Math.exp(-Math.pow((hpm - 275) / 25, 2));
+  const Rc = 2 * Math.sqrt(Math.pow(Cpm, 7) / (Math.pow(Cpm, 7) + 6103515625));
+  const Sl = 1 + 0.015 * Math.pow(Lpm - 50, 2) / Math.sqrt(20 + Math.pow(Lpm - 50, 2));
+  const Sc = 1 + 0.045 * Cpm, Sh = 1 + 0.015 * Cpm * T, Rt = -Math.sin(2 * dTh * rad) * Rc;
+  return Math.sqrt(Math.pow(dLp / Sl, 2) + Math.pow(dCp / Sc, 2) + Math.pow(dHp / Sh, 2) + Rt * (dCp / Sc) * (dHp / Sh));
+}
+const lum = c => (0.2126 * linf(c[0]) + 0.7152 * linf(c[1]) + 0.0722 * linf(c[2]));
+const inkFor = c => lum(c) > 0.32 ? "#111" : "#fff";
+const mix = (c, d, t) => [c[0] + (d[0] - c[0]) * t, c[1] + (d[1] - c[1]) * t, c[2] + (d[2] - c[2]) * t];
+
+/* DMC */
+const DMC = DMC_RAW.split(";").map(s => { const [code, name, hex] = s.split("|"); const rgb = hexToRgb(hex); return { code, name, hex: "#" + hex, rgb, lab: rgbToLab(rgb) }; });
+const DMC_BY = Object.fromEntries(DMC.map(d => [d.code, d]));
+
+const SYMBOLS = ["●","■","▲","◆","★","♥\uFE0E","✚","✖","○","□","△","◇","☆","♡","▼","◐","◑","♣\uFE0E","♠\uFE0E","♦\uFE0E","◄","►","◢","◣","◤","◥","▣","▦","▧","▩","⊕","⊗","⊙","⊞","⊠","≡","∴","#","@","%","&","$","?","!","+","=","~","<",">","Ω","Σ","Δ","Φ","Ψ","λ","π","∞","Ж","Ш","Я","Б","Г","Д","И","Л","Ф","Ц","Ч","A","B","C","E","F","H","K","M","N","P","R","S","T","U","V","W","X","Y","Z","2","3","4","5","7","8","9","ß","¥","€","£"];
+
+function makePalEntry(code, code2, type = "x") {
+  const a = DMC_BY[code], b = code2 ? DMC_BY[code2] : null;
+  const rgb = b ? blendRgb(a.rgb, b.rgb) : a.rgb.slice();
+  return { code: a.code, name: a.name, code2: b ? b.code : null, name2: b ? b.name : null, hex: rgbToHex(rgb), hexA: a.hex, hexB: b ? b.hex : null, type, sym: "" };
+}
+const palRgb = p => hexToRgb(p.hex);
+const palLabel = p => p.code2 ? `${p.code} + ${p.code2}` : p.code;
+const palName = p => p.code2 ? `${p.name} / ${p.name2}` : p.name;
+
+/* ============ kumaş ============ */
+const FABRICS = [
+  { id: "a11", label: "Aida 11", count: 11, over2: false },
+  { id: "a14", label: "Aida 14", count: 14, over2: false },
+  { id: "a16", label: "Aida 16", count: 16, over2: false },
+  { id: "a18", label: "Aida 18", count: 18, over2: false },
+  { id: "a20", label: "Aida 20", count: 20, over2: false },
+  { id: "e25", label: "Etamin 25 ct (2 iplik üzeri)", count: 25, over2: true },
+  { id: "e28", label: "Etamin 28 ct (2 iplik üzeri)", count: 28, over2: true },
+  { id: "e32", label: "Etamin 32 ct (2 iplik üzeri)", count: 32, over2: true },
+  { id: "e36", label: "Etamin 36 ct (2 iplik üzeri)", count: 36, over2: true },
+  { id: "custom", label: "Özel sayım", count: 14, over2: false },
+];
+const FAB_COLORS = [["Beyaz", "#FAFAF6"], ["Krem", "#F2EAD6"], ["Bej", "#E2D5BD"], ["Açık gri", "#D3D4D1"], ["Siyah", "#1E1F22"], ["Lacivert", "#22304E"]];
+const spi = f => f.over2 ? f.count / 2 : f.count; // inç başına haç
+function strandsFor(f) { const s = spi(f); return s <= 11 ? 3 : s <= 18 ? 2 : 1; }
+
+/* ============ depolama: bulut (db) ya da cihaz ============ */
+const Store = {
+  mode: "none", db: null, coll: null, listeners: new Map(), listListeners: new Set(), q: {},
+  provider: "none", fb: null, user: null,
+  async init() {
+    const cfg = window.FIREBASE_CONFIG;
+    if (cfg && cfg.apiKey && cfg.projectId) { if (await this.initFirebase(cfg)) return; }
+    let db = null, user = null, id = null;
+    try {
+      if (window.claude && typeof window.claude.use === "function") {
+        [db, user] = await Promise.all([window.claude.use("db"), window.claude.use("user")]);
+        if (user) id = await user.id();
+      }
+    } catch (e) { db = null; }
+    if (db && id) { this.mode = "cloud"; this.provider = "claude"; this.db = db; this.coll = db.collection("data/users/" + id); }
+    else { this.mode = this.localOk() ? "local" : "none"; }
+    this.syncIdle();
+  },
+  async initFirebase(cfg) {
+    const V = "10.12.2", base = `https://www.gstatic.com/firebasejs/${V}/`;
+    try {
+      await loadScript(base + "firebase-app-compat.js");
+      await Promise.all([loadScript(base + "firebase-auth-compat.js"), loadScript(base + "firebase-firestore-compat.js")]);
+    } catch (e) { toast("Google bağlantısı yüklenemedi; çalışmalar şimdilik bu cihazda saklanıyor.", 4000); return false; }
+    try {
+      firebase.initializeApp(cfg);
+      const fs = firebase.firestore();
+      try { fs.settings({ ignoreUndefinedProperties: true, merge: true }); } catch (e) {}
+      try { await fs.enablePersistence({ synchronizeTabs: true }); } catch (e) {}
+      this.fb = { auth: firebase.auth(), fs };
+      const u = await new Promise(res => { const un = this.fb.auth.onAuthStateChanged(x => { un(); res(x); }); });
+      this.attach(u);
+      this.fb.auth.onAuthStateChanged(x => this.onAuth(x));
+      return true;
+    } catch (e) { console.warn(e); toast("Firebase ayarı hatalı görünüyor; çalışmalar bu cihazda saklanıyor.", 4500); this.fb = null; return false; }
+  },
+  attach(u) {
+    this.user = u || null;
+    if (u) { this.mode = "cloud"; this.provider = "google"; this.coll = this.fb.fs.collection("users").doc(u.uid).collection("items"); }
+    else { this.mode = this.localOk() ? "local" : "none"; this.provider = "none"; this.coll = null; }
+    renderAcct(); this.syncIdle();
+  },
+  onAuth(u) {
+    if ((u && u.uid) === (this.user && this.user.uid)) return;
+    this.attach(u); Work.close(); show("list"); startList();
+    if (u) maybeMigrate();
+  },
+  syncIdle() { setSync(this.mode === "cloud" ? "on" : this.mode === "local" ? "local" : "off", this.mode === "cloud" && this.provider === "google" ? "Google ile senkron" : undefined); },
+  localOk() { try { localStorage.setItem("ilmek:t", "1"); localStorage.removeItem("ilmek:t"); return true; } catch (e) { return false; } },
+  _lget(id) { try { const s = localStorage.getItem("ilmek:" + id); return s ? JSON.parse(s) : null; } catch (e) { return null; } },
+  _lemit(id) {
+    const d = this._lget(id);
+    (this.listeners.get(id) || []).forEach(cb => cb(d, { fromCache: false, hasPendingWrites: false }));
+    if (id.startsWith("prj_")) this._lemitList();
+  },
+  _lemitList() { const docs = this._llist(); this.listListeners.forEach(cb => cb(docs)); },
+  _llist() {
+    const out = []; try { for (let i = 0; i < localStorage.length; i++) { const k = localStorage.key(i); if (k && k.startsWith("ilmek:prj_")) { const d = this._lget(k.slice(6)); if (d) out.push({ id: k.slice(6), data: d }); } } } catch (e) {}
+    return out;
+  },
+  mem: {},
+  queue(id, fn) { const p = (this.q[id] || Promise.resolve()).then(fn); this.q[id] = p.catch(() => {}); return p; },
+  async set(id, data) {
+    if (this.mode === "cloud") return this.queue(id, () => this.coll.doc(id).set(data));
+    if (this.mode === "local") { try { localStorage.setItem("ilmek:" + id, JSON.stringify(data)); } catch (e) { throw { code: "quota_exceeded", message: "Cihaz depolama alanı dolu" }; } this._lemit(id); return; }
+    this.mem[id] = data;
+  },
+  async update(id, data) {
+    if (this.mode === "cloud") return this.queue(id, () => this.coll.doc(id).update(data));
+    const cur = this.mode === "local" ? this._lget(id) : this.mem[id];
+    return this.set(id, Object.assign({}, cur || {}, data));
+  },
+  async get(id) {
+    if (this.mode === "cloud") { const s = await this.coll.doc(id).get(); return s.exists ? s.data() : null; }
+    if (this.mode === "local") return this._lget(id);
+    return this.mem[id] || null;
+  },
+  async del(id) {
+    if (this.mode === "cloud") return this.queue(id, () => this.coll.doc(id).delete());
+    if (this.mode === "local") { try { localStorage.removeItem("ilmek:" + id); } catch (e) {} this._lemit(id); return; }
+    delete this.mem[id];
+  },
+  watch(id, cb) {
+    if (this.mode === "cloud") return this.coll.doc(id).onSnapshot(s => cb(s.exists ? s.data() : null, s.metadata), e => console.warn(e));
+    if (!this.listeners.has(id)) this.listeners.set(id, []);
+    this.listeners.get(id).push(cb);
+    return () => { const a = this.listeners.get(id) || []; const i = a.indexOf(cb); if (i >= 0) a.splice(i, 1); };
+  },
+  watchList(cb, onState) {
+    if (this.mode === "cloud") {
+      let timer = setTimeout(() => onState && onState("slow"), 10000);
+      const un = this.coll.where("kind", "==", "project").onSnapshot(s => {
+        if (!s.metadata.fromCache) { clearTimeout(timer); onState && onState("ok"); }
+        cb(s.docs.map(d => ({ id: d.id, data: d.data() })));
+      }, e => { clearTimeout(timer); onState && onState("error", e); });
+      return () => { clearTimeout(timer); un(); };
+    }
+    this.listListeners.add(cb);
+    cb(this.mode === "local" ? this._llist() : Object.entries(this.mem).filter(([k]) => k.startsWith("prj_")).map(([id, data]) => ({ id, data })));
+    return () => this.listListeners.delete(cb);
+  }
+};
+let syncState = "on";
+function setSync(state, text) {
+  const s = $("#sync"); s.className = "sync";
+  const map = { on: ["on", "Senkron açık"], local: ["busy", "Bu cihazda saklanıyor"], off: ["off", "Kayıt yapılamıyor"], saving: ["busy", "Kaydediliyor…"], saved: ["on", "Kaydedildi"], error: ["off", "Kaydedilemedi"], slow: ["busy", "Bağlantı bekleniyor"] };
+  const [cls, txt] = map[state] || map.on; s.classList.add(cls); s.querySelector("span").textContent = text || txt; s.title = text || txt;
+  if (state === "saved") setTimeout(() => { if ($("#sync span").textContent === "Kaydedildi") Store.syncIdle(); }, 1800);
+}
+function writeErr(e) {
+  console.warn(e); const code = e && e.code;
+  if (code === "quota_exceeded") { setSync("error", "Depolama dolu"); toast("Depolama alanı dolu. Eski bir çalışmayı silmeyi dene."); }
+  else if (code === "invalid_argument") { setSync("error"); toast("Bu görünümde kayıt izni yok; değişiklikler kaydedilmiyor."); }
+  else { setSync("error"); toast("Kaydedilemedi. Bağlantını kontrol et, değişiklikler bir sonraki işlemde yeniden denenecek."); }
+}
+
+function loadScript(src) {
+  return new Promise((res, rej) => {
+    const el = document.createElement("script"); el.src = src; el.async = true;
+    const t = setTimeout(() => rej(new Error("timeout")), 15000);
+    el.onload = () => { clearTimeout(t); res(); }; el.onerror = () => { clearTimeout(t); rej(new Error("load")); };
+    document.head.appendChild(el);
+  });
+}
+const G_ICON = `<svg viewBox="0 0 48 48" aria-hidden="true"><path fill="#FFC107" d="M43.6 20.5H42V20H24v8h11.3C33.7 32.7 29.2 36 24 36c-6.6 0-12-5.4-12-12s5.4-12 12-12c3.1 0 5.8 1.2 7.9 3.1l5.7-5.7C34 6.1 29.3 4 24 4 12.9 4 4 12.9 4 24s8.9 20 20 20 20-8.9 20-20c0-1.3-.1-2.4-.4-3.5z"/><path fill="#FF3D00" d="M6.3 14.7l6.6 4.8C14.7 15.1 19 12 24 12c3.1 0 5.8 1.2 7.9 3.1l5.7-5.7C34 6.1 29.3 4 24 4 16.3 4 9.7 8.3 6.3 14.7z"/><path fill="#4CAF50" d="M24 44c5.2 0 9.9-2 13.4-5.2l-6.2-5.2C29.2 35.1 26.7 36 24 36c-5.2 0-9.6-3.3-11.3-7.9l-6.5 5C9.5 39.6 16.2 44 24 44z"/><path fill="#1976D2" d="M43.6 20.5H42V20H24v8h11.3c-.8 2.2-2.2 4.2-4.1 5.6l6.2 5.2C37 39.2 44 34 44 24c0-1.3-.1-2.4-.4-3.5z"/></svg>`;
+function authError(e) {
+  const c = e && e.code || "";
+  if (c === "auth/popup-closed-by-user" || c === "auth/cancelled-popup-request") return;
+  if (c === "auth/unauthorized-domain") toast("Bu adres Firebase’de yetkili alan olarak ekli değil. Authentication > Settings > Authorized domains bölümüne ekle.", 6000);
+  else if (c === "auth/configuration-not-found" || c === "auth/operation-not-allowed") toast("Firebase’de Google ile giriş açık değil. Authentication > Sign-in method bölümünden Google’ı etkinleştir.", 6000);
+  else toast("Giriş yapılamadı" + (c ? ` (${c})` : "") + ".", 4500);
+}
+const IN_APP = /\b(Teams|FBAN|FBAV|FB_IAB|Instagram|LinkedInApp|Line\/|Snapchat|MicroMessenger|Twitter|TikTok|musical_ly|Pinterest|GSA\/)/i.test(navigator.userAgent) || (/iPhone|iPad|iPod/.test(navigator.userAgent) && !/Safari\//.test(navigator.userAgent) && !/CriOS|FxiOS|EdgiOS/.test(navigator.userAgent));
+async function openInBrowserHelp() {
+  const ios = /iPhone|iPad|iPod/.test(navigator.userAgent);
+  const r = await modal({ title: "Tarayıcıda aç", body: `<p style="margin:0 0 8px">Bu sayfa başka bir uygulamanın (Teams, Instagram, WhatsApp gibi) içindeki tarayıcıda açılmış. Google bu tür tarayıcılarda girişe izin vermiyor.</p><p class="small muted" style="margin:0">Sağ alttaki ya da sağ üstteki <b>•••</b> menüsünden <b>${ios ? "Safari’de aç" : "Tarayıcıda aç"}</b> seçeneğini kullan. Menüde yoksa bağlantıyı kopyalayıp ${ios ? "Safari" : "Chrome"}’ye yapıştır.</p>`, actions: [{ label: "Kapat", value: false }, { label: "Bağlantıyı kopyala", value: true, cls: "primary" }] });
+  if (r) { try { await navigator.clipboard.writeText(location.href); toast("Bağlantı kopyalandı."); } catch (e) { toast(location.href, 6000); } }
+}
+async function signIn() {
+  if (IN_APP) { openInBrowserHelp(); return; }
+  const p = new firebase.auth.GoogleAuthProvider(); p.setCustomParameters({ prompt: "select_account" });
+  try { await Store.fb.auth.signInWithPopup(p); }
+  catch (e) {
+    if (e.code === "auth/popup-blocked") toast("Giriş penceresi engellendi. Tarayıcının açılır pencere iznini verip tekrar dene.", 5000);
+    else if (["auth/operation-not-supported-in-this-environment", "auth/web-storage-unsupported", "auth/internal-error"].includes(e.code)) openInBrowserHelp();
+    else authError(e);
+  }
+}
+function renderAcct() {
+  const box = $("#acct"); if (!box) return;
+  if (!Store.fb) { box.innerHTML = ""; return; }
+  const u = Store.user;
+  if (!u) { box.innerHTML = `<button class="btn gbtn" id="gIn">${G_ICON}<span>Google ile giriş</span></button>`; $("#gIn").onclick = signIn; return; }
+  const ini = (u.displayName || u.email || "?").trim().charAt(0).toLocaleUpperCase("tr");
+  box.innerHTML = `<button class="avatar" id="gMe" title="${esc(u.email || "")}" aria-label="Hesap">${u.photoURL ? `<img src="${esc(u.photoURL)}" alt="" referrerpolicy="no-referrer">` : esc(ini)}</button>`;
+  $("#gMe").onclick = async () => {
+    const r = await modal({ title: "Google hesabı", body: `<p style="margin:0 0 6px"><b>${esc(u.displayName || "")}</b><br><span class="muted">${esc(u.email || "")}</span></p><p class="small muted">Çalışmaların bu hesaba kayıtlı. Aynı hesapla giriş yaptığın her cihazda ilerleme eşitlenir.</p>`, actions: [{ label: "Kapat", value: false }, { label: "Çıkış yap", value: true, cls: "primary" }] });
+    if (r) { Work.flush(); await Store.fb.auth.signOut(); toast("Çıkış yapıldı."); }
+  };
+}
+async function maybeMigrate() {
+  const local = Store._llist(); if (!local.length) return;
+  const ok = await confirmBox("Bu cihazdaki çalışmalar", `Bu tarayıcıda giriş yapmadan oluşturduğun ${local.length} çalışma var. Google hesabına taşıyalım mı? Taşınanlar diğer cihazlarında da görünür.`, "Hesaba taşı");
+  if (!ok) return;
+  let n = 0;
+  for (const { id } of local) {
+    const pid = id.slice(4);
+    try {
+      for (const k of ["img_", "pat_", "prj_"]) { const d = Store._lget(k + pid); if (d) await Store.set(k + pid, d); }
+      ["img_", "pat_", "prj_"].forEach(k => { try { localStorage.removeItem("ilmek:" + k + pid); } catch (e) {} });
+      n++;
+    } catch (e) { writeErr(e); break; }
+  }
+  if (n) toast(`${n} çalışma Google hesabına taşındı.`);
+}
+
+/* ============ şablon motoru ============ */
+const MAX_CELLS = 150000;
+
+function computeDims(S, imgW, imgH) {
+  const f = S.fabric, per = spi(f), ratio = S.ratio;
+  let stW = Math.max(4, Math.round(S.widthSt));
+  let cw = ratio === 4 ? Math.max(2, Math.round(stW / 2)) : stW;
+  let ch = Math.max(2, Math.round(cw * imgH / imgW));
+  let clamped = false;
+  if (cw * ch > MAX_CELLS) { const k = Math.sqrt(MAX_CELLS / (cw * ch)); cw = Math.floor(cw * k); ch = Math.floor(ch * k); clamped = true; }
+  const m = ratio === 4 ? 2 : 1;
+  const sw = cw * m, sh = ch * m;
+  const wCm = sw / per * 2.54, hCm = sh / per * 2.54;
+  return { cw, ch, sw, sh, wCm, hCm, cutW: wCm + 2 * S.margin, cutH: hCm + 2 * S.margin, clamped };
+}
+
+function samplePixels(img, cw, ch, adj) {
+  const s = clamp(Math.floor(1800 / Math.max(cw, ch)), 1, 4);
+  const W = cw * s, H = ch * s;
+  // kademeli küçültme (yüksek kalite)
+  let src = img, sw = img.naturalWidth || img.width, sh = img.naturalHeight || img.height;
+  while (sw / 2 > W && sh / 2 > H) {
+    const c = document.createElement("canvas"); c.width = Math.round(sw / 2); c.height = Math.round(sh / 2);
+    const x = c.getContext("2d"); x.imageSmoothingQuality = "high"; x.drawImage(src, 0, 0, c.width, c.height);
+    src = c; sw = c.width; sh = c.height;
+  }
+  const c = document.createElement("canvas"); c.width = W; c.height = H;
+  const x = c.getContext("2d", { willReadFrequently: true }); x.imageSmoothingQuality = "high"; x.drawImage(src, 0, 0, W, H);
+  const d = x.getImageData(0, 0, W, H).data;
+  const n = cw * ch, rgb = new Float32Array(n * 3), mask = new Uint8Array(n);
+  const ss = s * s;
+  for (let cy = 0; cy < ch; cy++) for (let cx = 0; cx < cw; cx++) {
+    let r = 0, g = 0, b = 0, a = 0;
+    for (let yy = 0; yy < s; yy++) { let p = ((cy * s + yy) * W + cx * s) * 4; for (let xx = 0; xx < s; xx++, p += 4) { const al = d[p + 3]; r += d[p] * al; g += d[p + 1] * al; b += d[p + 2] * al; a += al; } }
+    const i = cy * cw + cx;
+    if (a / ss >= 110) { rgb[i * 3] = r / a; rgb[i * 3 + 1] = g / a; rgb[i * 3 + 2] = b / a; mask[i] = 1; }
+  }
+  // ton ayarları
+  if (adj && (adj.c || adj.s || adj.b)) {
+    const cf = 1 + adj.c / 100, sf = 1 + adj.s / 100, bo = adj.b * 1.6;
+    for (let i = 0; i < n; i++) { if (!mask[i]) continue;
+      let r = rgb[i * 3], g = rgb[i * 3 + 1], b = rgb[i * 3 + 2];
+      const L = 0.299 * r + 0.587 * g + 0.114 * b;
+      r = L + (r - L) * sf; g = L + (g - L) * sf; b = L + (b - L) * sf;
+      r = (r - 128) * cf + 128 + bo; g = (g - 128) * cf + 128 + bo; b = (b - 128) * cf + 128 + bo;
+      rgb[i * 3] = clamp(r, 0, 255); rgb[i * 3 + 1] = clamp(g, 0, 255); rgb[i * 3 + 2] = clamp(b, 0, 255);
+    }
+  }
+  const lab = new Float32Array(n * 3);
+  for (let i = 0; i < n; i++) if (mask[i]) {
+    const l = linToLab(LIN[Math.round(rgb[i * 3])], LIN[Math.round(rgb[i * 3 + 1])], LIN[Math.round(rgb[i * 3 + 2])]);
+    lab[i * 3] = l[0]; lab[i * 3 + 1] = l[1]; lab[i * 3 + 2] = l[2];
+  }
+  return { lab, mask, n };
+}
+
+function pickSample(mask, max, rnd) {
+  const vis = []; for (let i = 0; i < mask.length; i++) if (mask[i]) vis.push(i);
+  if (vis.length <= max) return vis;
+  const out = []; for (let i = 0; i < max; i++) out.push(vis[Math.floor(rnd() * vis.length)]); return out;
+}
+
+function kmeans(lab, idx, k, iters, rnd) {
+  const n = idx.length; k = Math.min(k, n);
+  const C = new Float32Array(k * 3), D = new Float32Array(n).fill(1e9);
+  const f = idx[Math.floor(rnd() * n)]; C[0] = lab[f * 3]; C[1] = lab[f * 3 + 1]; C[2] = lab[f * 3 + 2];
+  for (let c = 1; c < k; c++) {
+    let sum = 0;
+    for (let j = 0; j < n; j++) { const p = idx[j] * 3; const dl = lab[p] - C[(c - 1) * 3], da = lab[p + 1] - C[(c - 1) * 3 + 1], db = lab[p + 2] - C[(c - 1) * 3 + 2]; const d = dl * dl + da * da + db * db; if (d < D[j]) D[j] = d; sum += D[j]; }
+    let r = rnd() * sum, pick = idx[n - 1];
+    for (let j = 0; j < n; j++) { r -= D[j]; if (r <= 0) { pick = idx[j]; break; } }
+    C[c * 3] = lab[pick * 3]; C[c * 3 + 1] = lab[pick * 3 + 1]; C[c * 3 + 2] = lab[pick * 3 + 2];
+  }
+  const A = new Int32Array(n); let err = 0;
+  for (let it = 0; it < iters; it++) {
+    const S = new Float64Array(k * 3), N = new Float64Array(k); err = 0;
+    for (let j = 0; j < n; j++) {
+      const p = idx[j] * 3, L = lab[p], a = lab[p + 1], b = lab[p + 2]; let best = 0, bd = 1e18;
+      for (let c = 0; c < k; c++) { const dl = L - C[c * 3], da = a - C[c * 3 + 1], db = b - C[c * 3 + 2]; const d = dl * dl + da * da + db * db; if (d < bd) { bd = d; best = c; } }
+      A[j] = best; S[best * 3] += L; S[best * 3 + 1] += a; S[best * 3 + 2] += b; N[best]++; err += Math.sqrt(bd);
+    }
+    for (let c = 0; c < k; c++) if (N[c]) { C[c * 3] = S[c * 3] / N[c]; C[c * 3 + 1] = S[c * 3 + 1] / N[c]; C[c * 3 + 2] = S[c * 3 + 2] / N[c]; }
+  }
+  return { C, k, err: err / n };
+}
+
+function suggestColors(px, cells) {
+  const rnd = mulberry(7);
+  const idx = pickSample(px.mask, 4000, rnd);
+  if (idx.length < 10) return { k: 2, err: 0 };
+  const ks = [3, 4, 6, 8, 10, 12, 15, 18, 22, 26, 30, 36, 44, 52, 60];
+  const cap = clamp(Math.round(Math.sqrt(cells) * 0.55), 6, 80);
+  let pick = null, last = null;
+  for (const k of ks) {
+    if (k > cap) break;
+    const r = kmeans(px.lab, idx, k, 6, mulberry(11));
+    last = { k, err: r.err };
+    if (r.err <= 4.6) { pick = last; break; }
+  }
+  return pick || last || { k: Math.min(cap, 24), err: 0 };
+}
+
+function matchThreads(C, k, allowBlend) {
+  const out = [];
+  for (let c = 0; c < k; c++) {
+    const lab = [C[c * 3], C[c * 3 + 1], C[c * 3 + 2]];
+    const ranked = DMC.map(d => ({ d, e: de2000(lab, d.lab) })).sort((a, b) => a.e - b.e);
+    const best = ranked[0];
+    let entry = { code: best.d.code, code2: null, e: best.e };
+    if (allowBlend && best.e > 3.5) {
+      const top = ranked.slice(0, 14);
+      let bb = null;
+      for (let i = 0; i < top.length; i++) for (let j = i + 1; j < top.length; j++) {
+        const rgb = blendRgb(top[i].d.rgb, top[j].d.rgb); const e = de2000(lab, rgbToLab(rgb));
+        if (!bb || e < bb.e) bb = { a: top[i].d.code, b: top[j].d.code, e };
+      }
+      if (bb && bb.e < best.e - 2.2 && bb.e < best.e * 0.7) entry = { code: bb.a, code2: bb.b, e: bb.e };
+    }
+    out.push(entry);
+  }
+  const seen = new Map(), pal = [];
+  for (const e of out) { const key = e.code2 ? [e.code, e.code2].sort().join("+") : e.code; if (!seen.has(key)) { seen.set(key, pal.length); pal.push(makePalEntry(e.code, e.code2)); } }
+  return pal;
+}
+
+function assignCells(px, pal, cw, ch, dither) {
+  const n = cw * ch, cells = new Uint8Array(n).fill(255);
+  const P = pal.map(p => rgbToLab(palRgb(p)));
+  const work = dither ? Float32Array.from(px.lab) : px.lab;
+  const nearest = (L, a, b) => { let best = 0, bd = 1e18; for (let c = 0; c < P.length; c++) { const dl = L - P[c][0], da = a - P[c][1], db = b - P[c][2]; const d = dl * dl + da * da + db * db; if (d < bd) { bd = d; best = c; } } return best; };
+  for (let y = 0; y < ch; y++) for (let x = 0; x < cw; x++) {
+    const i = y * cw + x; if (!px.mask[i]) continue;
+    const L = work[i * 3], a = work[i * 3 + 1], b = work[i * 3 + 2];
+    const c = nearest(L, a, b); cells[i] = c;
+    if (dither) {
+      const eL = (L - P[c][0]) * 0.75, ea = (a - P[c][1]) * 0.75, eb = (b - P[c][2]) * 0.75;
+      const push = (xx, yy, w) => { if (xx < 0 || xx >= cw || yy >= ch) return; const j = yy * cw + xx; if (!px.mask[j]) return; work[j * 3] += eL * w; work[j * 3 + 1] += ea * w; work[j * 3 + 2] += eb * w; };
+      push(x + 1, y, 7 / 16); push(x - 1, y + 1, 3 / 16); push(x, y + 1, 5 / 16); push(x + 1, y + 1, 1 / 16);
+    }
+  }
+  return cells;
+}
+
+function removeBackground(cells, w, h) {
+  const cnt = new Map(); let tot = 0;
+  const border = []; for (let x = 0; x < w; x++) border.push(x, (h - 1) * w + x); for (let y = 1; y < h - 1; y++) border.push(y * w, y * w + w - 1);
+  for (const i of border) { const c = cells[i]; if (c === 255) continue; cnt.set(c, (cnt.get(c) || 0) + 1); tot++; }
+  let bc = -1, bn = 0; cnt.forEach((v, k) => { if (v > bn) { bn = v; bc = k; } });
+  if (bc < 0 || bn < tot * 0.3) return;
+  const st = border.filter(i => cells[i] === bc);
+  while (st.length) { const i = st.pop(); if (cells[i] !== bc) continue; cells[i] = 255; const x = i % w, y = (i / w) | 0;
+    if (x > 0) st.push(i - 1); if (x < w - 1) st.push(i + 1); if (y > 0) st.push(i - w); if (y < h - 1) st.push(i + w); }
+}
+
+function cleanupCells(cells, w, h, level) {
+  for (let pass = 0; pass < level; pass++) {
+    const thr = pass === 0 ? 0 : 1, src = cells.slice();
+    for (let y = 0; y < h; y++) for (let x = 0; x < w; x++) {
+      const i = y * w + x, c = src[i]; if (c === 255) continue;
+      let same = 0; const tally = new Map();
+      for (let dy = -1; dy <= 1; dy++) for (let dx = -1; dx <= 1; dx++) {
+        if (!dx && !dy) continue; const xx = x + dx, yy = y + dy; if (xx < 0 || yy < 0 || xx >= w || yy >= h) continue;
+        const v = src[yy * w + xx]; if (v === c) same++; else if (v !== 255) tally.set(v, (tally.get(v) || 0) + 1);
+      }
+      if (same <= thr && tally.size) { let bv = c, bn = 0; tally.forEach((n, v) => { if (n > bn) { bn = n; bv = v; } }); cells[i] = bv; }
+    }
+  }
+}
+
+function compactPalette(cells, pal, keep = new Set()) {
+  const count = new Array(pal.length).fill(0); for (const c of cells) if (c !== 255) count[c]++;
+  const order = pal.map((p, i) => i).filter(i => count[i] > 0 || keep.has(i)).sort((a, b) => count[b] - count[a]);
+  const map = new Array(pal.length).fill(255); order.forEach((o, n) => map[o] = n);
+  for (let i = 0; i < cells.length; i++) if (cells[i] !== 255) cells[i] = map[cells[i]];
+  return { pal: order.map(o => pal[o]), map };
+}
+
+function autoBackstitch(cells, w, h, pal, thr, colorIdx) {
+  const L = pal.map(p => rgbToLab(palRgb(p)));
+  const D = (a, b) => a === 255 || b === 255 ? 0 : Math.hypot(L[a][0] - L[b][0], L[a][1] - L[b][1], L[a][2] - L[b][2]);
+  const segs = [];
+  // yatay kenarlar
+  for (let y = 1; y < h; y++) { let run = -1;
+    for (let x = 0; x <= w; x++) {
+      const on = x < w && (() => { const a = cells[(y - 1) * w + x], b = cells[y * w + x]; return a !== b && D(a, b) > thr; })();
+      if (on && run < 0) run = x; if (!on && run >= 0) { segs.push([run * 2, y * 2, x * 2, y * 2, colorIdx]); run = -1; }
+    } }
+  for (let x = 1; x < w; x++) { let run = -1;
+    for (let y = 0; y <= h; y++) {
+      const on = y < h && (() => { const a = cells[y * w + x - 1], b = cells[y * w + x]; return a !== b && D(a, b) > thr; })();
+      if (on && run < 0) run = y; if (!on && run >= 0) { segs.push([x * 2, run * 2, x * 2, y * 2, colorIdx]); run = -1; }
+    } }
+  return segs;
+}
+
+function backRuns(w, h, on, colorIdx) {
+  const segs = [];
+  for (let y = 1; y < h; y++) { let run = -1;
+    for (let x = 0; x <= w; x++) { const v = x < w && on((y - 1) * w + x, y * w + x); if (v && run < 0) run = x; if (!v && run >= 0) { segs.push([run * 2, y * 2, x * 2, y * 2, colorIdx]); run = -1; } } }
+  for (let x = 1; x < w; x++) { let run = -1;
+    for (let y = 0; y <= h; y++) { const v = y < h && on(y * w + x - 1, y * w + x); if (v && run < 0) run = y; if (!v && run >= 0) { segs.push([x * 2, run * 2, x * 2, y * 2, colorIdx]); run = -1; } } }
+  return segs;
+}
+
+/* ---------- otomatik ilmek kararı ---------- */
+const labDist = (a, b) => Math.hypot(a[0] - b[0], a[1] - b[1], a[2] - b[2]);
+function nearestDMC(lab) { let best = DMC[0], bd = 1e9; for (const d of DMC) { const e = de2000(lab, d.lab); if (e < bd) { bd = e; best = d; } } return best; }
+function palIndexFor(pal, code) {
+  let i = pal.findIndex(p => !p.code2 && p.code === code); if (i >= 0) return i;
+  if (pal.length >= 250) return -1;
+  const e = makePalEntry(code, null, "x"); e.backOnly = true; pal.push(e); return pal.length - 1;
+}
+// Tek başına kalmış, çevresinden çok farklı kareleri Fransız düğümüne çevirir
+function findDots(cells, w, h, pal, px, px2) {
+  const L = pal.map(p => rgbToLab(palRgb(p))); const cands = [];
+  for (let y = 1; y < h - 1; y++) for (let x = 1; x < w - 1; x++) {
+    const i = y * w + x, c = cells[i]; if (c === 255) continue;
+    const t = new Map(); let bad = false;
+    for (let dy = -1; dy <= 1 && !bad; dy++) for (let dx = -1; dx <= 1; dx++) { if (!dx && !dy) continue; const v = cells[i + dy * w + dx]; if (v === c || v === 255) { bad = true; break; } t.set(v, (t.get(v) || 0) + 1); }
+    if (bad) continue;
+    let m = -1, mn = 0; t.forEach((n, v) => { if (n > mn) { mn = n; m = v; } });
+    if (mn < 6) continue;
+    const de = labDist(L[c], L[m]); if (de < 28) continue;
+    cands.push([de, x, y, c, m]);
+  }
+  cands.sort((a, b) => b[0] - a[0]);
+  const cap = Math.max(3, Math.round(w * h * 0.0015)), out = [], placed = [];
+  for (const [de, x, y, c, m] of cands) {
+    if (placed.some(([px, py]) => Math.abs(px - x) <= 2 && Math.abs(py - y) <= 2)) continue;
+    // düğüm rengi: karenin içindeki en belirgin noktanın gerçek rengi (tek DMC, karışım değil)
+    const ml = L[m]; let best = null, bd = -1;
+    if (px2) { for (let sy = 0; sy < 2; sy++) for (let sx = 0; sx < 2; sx++) { const q = (y * 2 + sy) * w * 2 + x * 2 + sx; if (!px2.mask[q]) continue; const lq = [px2.lab[q * 3], px2.lab[q * 3 + 1], px2.lab[q * 3 + 2]], e = labDist(lq, ml); if (e > bd) { bd = e; best = lq; } } }
+    if (!best) { const q = y * w + x; best = [px.lab[q * 3], px.lab[q * 3 + 1], px.lab[q * 3 + 2]]; }
+    // nokta karenin bir kısmını kapladığı için rengini arka plandan uzaklaştırarak belirginleştir
+    const pushL = [clamp(best[0] + (best[0] - ml[0]) * 0.6, 0, 100), best[1], best[2]];
+    cells[y * w + x] = m; out.push([x * 2 + 1, y * 2 + 1, nearestDMC(pushL).code]); placed.push([x, y]);
+    if (out.length >= cap) break;
+  }
+  return out;
+}
+function thinLines(px2, cells, w, h, pal, fabLab) {
+  const W = w * 2, H = h * 2, lab = px2.lab, mask = px2.mask, PL = pal.map(p => rgbToLab(palRgb(p)));
+  const chartL = p => { const c = cells[((p / W | 0) >> 1) * w + ((p % W) >> 1)]; return c === 255 ? fabLab[0] : PL[c][0]; };
+  const dirs = [[1, 0], [0, 1], [1, 1], [1, -1]];
+  const run = thr => {
+    const dark = new Uint8Array(W * H), light = new Uint8Array(W * H);
+    const Lat = (x, y) => lab[(y * W + x) * 3];
+    for (let y = 2; y < H - 2; y++) for (let x = 2; x < W - 2; x++) {
+      const p = y * W + x; if (!mask[p]) continue; const Lp = lab[p * 3]; let sd = 0, sl = 0, along = false;
+      for (const [dx, dy] of dirs) {
+        if (Math.abs(Lat(x - dx, y - dy) - Lp) < thr * 0.45 && Math.abs(Lat(x + dx, y + dy) - Lp) < thr * 0.45) along = true;
+        if (!mask[p - dy * W - dx] || !mask[p + dy * W + dx] || !mask[p - 2 * (dy * W + dx)] || !mask[p + 2 * (dy * W + dx)]) continue;
+        const a1 = Lat(x - dx, y - dy), b1 = Lat(x + dx, y + dy), a2 = Lat(x - 2 * dx, y - 2 * dy), b2 = Lat(x + 2 * dx, y + 2 * dy);
+        // çizginin ortası: yön boyunca yerel en koyu (ya da en açık) nokta
+        if (Lp <= a1 && Lp <= b1) sd = Math.max(sd, Math.min(Math.max(a1, a2), Math.max(b1, b2)) - Lp);
+        if (Lp >= a1 && Lp >= b1) sl = Math.max(sl, Lp - Math.max(Math.min(a1, a2), Math.min(b1, b2)));
+      }
+      if (!along) continue; // her yönde farklıysa çizgi değil, noktadır
+      const cl = chartL(p);
+      if (sd > thr && cl - Lp > 10) dark[p] = 1; else if (sl > thr && Lp - cl > 10) light[p] = 1;
+    }
+    // küçük boşlukları kapat (kesik kesik görünmesin)
+    for (const M of [dark, light]) {
+      const add = [];
+      for (let y = 2; y < H - 2; y++) for (let x = 2; x < W - 2; x++) { const p = y * W + x; if (M[p]) continue;
+        for (const [dx, dy] of [[1, 0], [0, 1], [1, 1], [1, -1], [2, 1], [1, 2], [2, -1], [1, -2]]) { if (M[p - dy * W - dx] && M[p + dy * W + dx]) { add.push(p); break; } } }
+      add.forEach(p => M[p] = 1);
+    }
+    // çok kısa parçaları at
+    for (const M of [dark, light]) {
+      const seen = new Uint8Array(W * H);
+      for (let p = 0; p < W * H; p++) { if (!M[p] || seen[p]) continue; const comp = [], st = [p]; seen[p] = 1;
+        while (st.length) { const q = st.pop(); comp.push(q); const qx = q % W, qy = q / W | 0; for (let dy = -1; dy <= 1; dy++) for (let dx = -1; dx <= 1; dx++) { const nx = qx + dx, ny = qy + dy; if (nx < 0 || ny < 0 || nx >= W || ny >= H) continue; const r = ny * W + nx; if (M[r] && !seen[r]) { seen[r] = 1; st.push(r); } } }
+        if (comp.length < 4) comp.forEach(q => M[q] = 0); }
+    }
+    return { dark, light };
+  };
+  const segsOf = (M) => {
+    const out = [];
+    for (const [dx, dy] of [[1, 0], [0, 1], [1, 1], [-1, 1]]) {
+      for (let y = 0; y < H; y++) for (let x = 0; x < W; x++) {
+        const p = y * W + x; if (!M[p]) continue;
+        const nx = x + dx, ny = y + dy; if (nx < 0 || nx >= W || ny >= H || !M[ny * W + nx]) continue;
+        const bx = x - dx, by = y - dy; if (bx >= 0 && bx < W && by >= 0 && M[by * W + bx]) continue; // koşunun başı değil
+        let ex = nx, ey = ny; while (true) { const fx = ex + dx, fy = ey + dy; if (fx < 0 || fx >= W || fy >= H || !M[fy * W + fx]) break; ex = fx; ey = fy; }
+        out.push([x, y, ex, ey]);
+      }
+    }
+    return out;
+  };
+  let thr = 20, r, segs = [];
+  for (let t = 0; t < 4; t++, thr += 8) {
+    r = run(thr); const sd = segsOf(r.dark), sl = segsOf(r.light);
+    segs = [[sd, r.dark], [sl, r.light]];
+    if (sd.length + sl.length <= w * h * 0.03) break;
+    if (t === 3) return [];
+  }
+  const res = [];
+  for (const [ss, M] of segs) {
+    if (!ss.length) continue;
+    let a = 0, b = 0, c = 0, cl = 0, n = 0; for (let p = 0; p < W * H; p++) if (M[p]) { a += lab[p * 3]; b += lab[p * 3 + 1]; c += lab[p * 3 + 2]; cl += chartL(p); n++; }
+    const Lm = a / n, Lc = cl / n; // çizgi kareye göre ince olduğundan tonu biraz koyulaştır/açılaştır
+    const d = nearestDMC([clamp(Lm + (Lm - Lc) * 0.6, 0, 100), b / n * 1.2, c / n * 1.2]); const ci = palIndexFor(pal, d.code); if (ci < 0) continue;
+    ss.forEach(s => res.push([s[0], s[1], s[2], s[3], ci]));
+  }
+  return res;
+}
+function autoDecide(px, px2, cells, w, h, pal, S, fabRgb) {
+  const n = w * h, fabLab = rgbToLab(fabRgb), info = { half: 0, lines: 0, contour: 0, graphic: false };
+  // kaynak resimdeki yerel ayrıntı
+  const det = new Float32Array(n); let vis = 0, flat = 0;
+  for (let y = 0; y < h; y++) for (let x = 0; x < w; x++) {
+    const i = y * w + x; if (!px.mask[i]) continue; let s = 0, k = 0;
+    for (const [dx, dy] of [[1, 0], [-1, 0], [0, 1], [0, -1]]) { const xx = x + dx, yy = y + dy; if (xx < 0 || yy < 0 || xx >= w || yy >= h) continue; const j = yy * w + xx; if (!px.mask[j]) continue; s += Math.hypot(px.lab[i * 3] - px.lab[j * 3], px.lab[i * 3 + 1] - px.lab[j * 3 + 1], px.lab[i * 3 + 2] - px.lab[j * 3 + 2]); k++; }
+    det[i] = k ? s / k : 0; vis++; if (det[i] < 2.5) flat++;
+  }
+  info.graphic = vis > 0 && flat / vis >= 0.55 && pal.length <= 30;
+  // bölgeler
+  const comp = new Int32Array(n).fill(-1), csize = [], cborder = [];
+  for (let i = 0; i < n; i++) { if (cells[i] === 255 || comp[i] >= 0) continue; const id = csize.length, c = cells[i], st = [i]; comp[i] = id; let sz = 0, bd = false;
+    while (st.length) { const q = st.pop(); sz++; const x = q % w, y = q / w | 0; if (x === 0 || y === 0 || x === w - 1 || y === h - 1) bd = true;
+      if (x > 0 && comp[q - 1] < 0 && cells[q - 1] === c) { comp[q - 1] = id; st.push(q - 1); } if (x < w - 1 && comp[q + 1] < 0 && cells[q + 1] === c) { comp[q + 1] = id; st.push(q + 1); }
+      if (y > 0 && comp[q - w] < 0 && cells[q - w] === c) { comp[q - w] = id; st.push(q - w); } if (y < h - 1 && comp[q + w] < 0 && cells[q + w] === c) { comp[q + w] = id; st.push(q + w); } }
+    csize.push(sz); cborder.push(bd); }
+  const PL = pal.map(p => rgbToLab(palRgb(p)));
+  // yarım haç
+  if (S.autoHalf) {
+    const A = [{ tD: 3, tF: 10, cm: 0.04 }, { tD: 5, tF: 16, cm: 0.02 }, { tD: 8, tF: 24, cm: 0.01 }][S.halfAmt ?? 1];
+    const cdet = new Float64Array(csize.length); for (let i = 0; i < n; i++) if (comp[i] >= 0) cdet[comp[i]] += det[i]; for (let k = 0; k < csize.length; k++) cdet[k] /= csize[k];
+    let half = new Uint8Array(n);
+    for (let i = 0; i < n; i++) { const c = cells[i]; if (c === 255) continue; const dF = labDist(PL[c], fabLab);
+      const bg = cborder[comp[i]] && csize[comp[i]] >= n * A.cm && dF < 50 && cdet[comp[i]] < A.tD * 1.4;
+      if (bg || (dF < A.tF && det[i] < A.tD)) half[i] = 1; }
+    const sm = half.slice();
+    for (let y = 1; y < h - 1; y++) for (let x = 1; x < w - 1; x++) { const i = y * w + x; if (cells[i] === 255) continue; let k = 0; for (let dy = -1; dy <= 1; dy++) for (let dx = -1; dx <= 1; dx++) if ((dx || dy) && half[i + dy * w + dx]) k++; if (k >= 6) sm[i] = 1; else if (k <= 2) sm[i] = 0; }
+    half = sm;
+    const per = new Map(), tot = new Map();
+    for (let i = 0; i < n; i++) { const c = cells[i]; if (c === 255) continue; tot.set(c, (tot.get(c) || 0) + 1); if (half[i]) per.set(c, (per.get(c) || 0) + 1); }
+    const vmap = new Map();
+    per.forEach((k, c) => { if (k < 12) return; if (k === tot.get(c)) { pal[c].type = "h"; vmap.set(c, c); } else if (pal.length < 250) { const e = Object.assign({}, pal[c], { type: "h", backOnly: false }); pal.push(e); vmap.set(c, pal.length - 1); } });
+    for (let i = 0; i < n; i++) { if (!half[i]) continue; const v = vmap.get(cells[i]); if (v !== undefined) { cells[i] = v; info.half++; } }
+  }
+  // backstitch
+  let back = [];
+  if (S.autoBackSmart) {
+    if (px2) { const tl = thinLines(px2, cells, w, h, pal, fabLab); info.lines = tl.length; back = back.concat(tl); }
+  }
+  info.back = back;
+  return info;
+}
+
+function assignSymbols(pal) { pal.forEach((p, i) => p.sym = SYMBOLS[i % SYMBOLS.length]); }
+
+function buildPattern(px, dims, S, px2) {
+  const { cw, ch } = dims; const rnd = mulberry(1234);
+  const idx = pickSample(px.mask, 14000, rnd);
+  if (!idx.length) return null;
+  const km = kmeans(px.lab, idx, S.colors, 10, mulberry(99));
+  let pal = matchThreads(km.C, km.k, S.blend);
+  let cells = assignCells(px, pal, cw, ch, S.dither);
+  if (S.bgEmpty) removeBackground(cells, cw, ch);
+  const auto = S.stitchMode === "auto";
+  let knots = [];
+  if (auto && S.autoKnots) knots = findDots(cells, cw, ch, pal, px, px2);
+  if (S.cleanup) cleanupCells(cells, cw, ch, S.cleanup);
+  pal = compactPalette(cells, pal).pal;
+  knots = knots.map(k => [k[0], k[1], palIndexFor(pal, k[2])]).filter(k => k[2] >= 0);
+  pal.forEach(p => p.type = auto ? "x" : S.stitch);
+  let back = [], info = null;
+  if (auto) { info = autoDecide(px, px2, cells, cw, ch, pal, S, hexToRgb(S.fabColor || "#FAFAF6")); back = info.back; info.knots = knots.length; delete info.back; }
+  else if (S.autoBack && pal.length > 1) {
+    let bi;
+    if (S.backColor === "dark") { bi = 0; let bl = 1e9; pal.forEach((p, i) => { const l = lum(palRgb(p)); if (l < bl) { bl = l; bi = i; } }); }
+    else { bi = pal.findIndex(p => !p.code2 && p.code === S.backColor); if (bi < 0) { const e = makePalEntry(S.backColor, null, "x"); e.backOnly = true; pal.push(e); bi = pal.length - 1; } }
+    back = autoBackstitch(cells, cw, ch, pal, 100 - S.backThr, bi);
+  }
+  assignSymbols(pal);
+  return { w: cw, h: ch, cells, palette: pal, back, knots, auto: info };
+}
+
+/* ============ ideal ölçü analizi ============ */
+// Resmi farklı şema genişliklerine indirip ne kadar ayrıntı kaybolduğunu ölçer.
+function analyzeDetail(img) {
+  const iw = img.naturalWidth, ih = img.naturalHeight;
+  const k = Math.min(1, 360 / Math.max(iw, ih));
+  const w = Math.max(8, Math.round(iw * k)), h = Math.max(8, Math.round(ih * k));
+  const c = document.createElement("canvas"); c.width = w; c.height = h;
+  const x = c.getContext("2d", { willReadFrequently: true }); x.imageSmoothingQuality = "high";
+  x.fillStyle = "#fff"; x.fillRect(0, 0, w, h); x.drawImage(img, 0, 0, w, h);
+  const d = x.getImageData(0, 0, w, h).data; const n = w * h;
+  let L = new Float32Array(n * 3);
+  for (let i = 0; i < n; i++) { const l = linToLab(LIN[d[i * 4]], LIN[d[i * 4 + 1]], LIN[d[i * 4 + 2]]); L[i * 3] = l[0]; L[i * 3 + 1] = l[1]; L[i * 3 + 2] = l[2]; }
+  // gürültü ve doku kumaşta görünmez: hafif bulanıklaştır (iki geçişli 3'lü kutu)
+  for (let pass = 0; pass < 2; pass++) {
+    const T = new Float32Array(n * 3);
+    for (let y = 0; y < h; y++) for (let xx = 0; xx < w; xx++) for (let ch = 0; ch < 3; ch++) { const a = xx > 0 ? xx - 1 : xx, b = xx < w - 1 ? xx + 1 : xx; T[(y * w + xx) * 3 + ch] = (L[(y * w + a) * 3 + ch] + L[(y * w + xx) * 3 + ch] + L[(y * w + b) * 3 + ch]) / 3; }
+    for (let y = 0; y < h; y++) for (let xx = 0; xx < w; xx++) for (let ch = 0; ch < 3; ch++) { const a = y > 0 ? y - 1 : y, b = y < h - 1 ? y + 1 : y; L[(y * w + xx) * 3 + ch] = (T[(a * w + xx) * 3 + ch] + T[(y * w + xx) * 3 + ch] + T[(b * w + xx) * 3 + ch]) / 3; }
+  }
+  const widths = [30, 40, 50, 60, 70, 80, 90, 100, 120, 140, 160, 180, 200, 240, 280, 320].filter(v => v < w || v === 30);
+  const curve = [];
+  for (const W of widths) {
+    const H = Math.max(2, Math.round(W * h / w)), S = new Float64Array(W * H * 3), N = new Float64Array(W * H);
+    const cx = new Int32Array(w), cy = new Int32Array(h);
+    for (let xx = 0; xx < w; xx++) cx[xx] = Math.min(W - 1, Math.floor(xx * W / w));
+    for (let y = 0; y < h; y++) cy[y] = Math.min(H - 1, Math.floor(y * H / h));
+    for (let y = 0; y < h; y++) for (let xx = 0; xx < w; xx++) { const p = (y * w + xx) * 3, q = cy[y] * W + cx[xx]; S[q * 3] += L[p]; S[q * 3 + 1] += L[p + 1]; S[q * 3 + 2] += L[p + 2]; N[q]++; }
+    let e = 0;
+    for (let y = 0; y < h; y++) for (let xx = 0; xx < w; xx++) { const p = (y * w + xx) * 3, q = cy[y] * W + cx[xx], m = N[q]; e += Math.hypot(L[p] - S[q * 3] / m, L[p + 1] - S[q * 3 + 1] / m, L[p + 2] - S[q * 3 + 2] / m); }
+    curve.push([W, e / n]);
+  }
+  const e0 = curve[0][1] || 1e-6;
+  const at = r => { for (const [W, e] of curve) if (e <= e0 * r) return W; return null; };
+  // küçük (piksel sanatı benzeri) resimlerde her piksel bir ilmek olsun
+  if (iw <= 160 && ih <= 160) return { min: iw, ideal: iw, pixel: true, curve, e0 };
+  let mn = at(0.5) || Math.min(320, iw), ide = at(0.28) || Math.min(320, iw);
+  mn = clamp(mn, 40, 300); ide = clamp(Math.max(ide, mn + 20), 60, 320);
+  ide = Math.min(ide, iw); mn = Math.min(mn, ide);
+  return { min: mn, ideal: ide, pixel: false, curve, e0 };
+}
+function detailQuality(adv, cells) {
+  if (!adv) return null;
+  if (cells >= adv.ideal) return { cls: "good", t: "Ayrıntı korunuyor" };
+  if (cells >= adv.min) return { cls: "mid", t: "Küçük ayrıntılar yumuşar" };
+  return { cls: "low", t: "Resim bozulur, ayrıntı kaybı belirgin" };
+}
+
+/* ============ iplik hesabı ============ */
+function threadUsage(P) {
+  const f = P.fabric, pitch = 2.54 / spi(f), strands = strandsFor(f), m = P.ratio === 4 ? 4 : 1;
+  const counts = new Array(P.palette.length).fill(0); for (const c of P.cells) if (c !== 255) counts[c]++;
+  const use = new Map(); const add = (code, cm) => use.set(code, (use.get(code) || 0) + cm);
+  P.palette.forEach((p, i) => {
+    const per = p.type === "h" ? 2.414 : 4.83; const cm = counts[i] * m * per * pitch * 1.15;
+    if (p.code2) { const st = Math.max(1, strands / 2); add(p.code, cm * st); add(p.code2, cm * st); } else add(p.code, cm * strands);
+  });
+  const half = P.ratio === 4 ? 1 : 0.5; // geri ilmek koordinatları yarım hücre biriminde
+  for (const s of P.back) { const len = Math.hypot(s[2] - s[0], s[3] - s[1]) * half * pitch; const p = P.palette[s[4]]; if (p) add(p.code, len * 2.2); }
+  for (const k of P.knots) { const p = P.palette[k[2]]; if (p) add(p.code, 4 * 2); }
+  return [...use.entries()].map(([code, cm]) => ({ code, name: (DMC_BY[code] || {}).name || "", hex: (DMC_BY[code] || {}).hex || "#888", cm, skeins: Math.max(0.1, cm / 4800) })).sort((a, b) => b.cm - a.cm);
+}
+
+/* ============ çizim ============ */
+const RUL = 26;
+function cssVar(n) { return getComputedStyle(document.documentElement).getPropertyValue(n).trim(); }
+
+function palColors(P, bgRgb) {
+  const white = [255, 255, 255], dark = [28, 30, 36];
+  return P.palette.map(p => {
+    const c = palRgb(p);
+    const v = { base: c, tint: mix(c, white, 0.72), dim: mix(c, dark, 0.5) };
+    v.fade = { base: mix(c, bgRgb, 0.86), tint: mix(v.tint, bgRgb, 0.8), dim: mix(v.dim, bgRgb, 0.86) };
+    const s = a => `rgb(${a[0] | 0},${a[1] | 0},${a[2] | 0})`;
+    v.css = { base: s(c), tint: s(v.tint), dim: s(v.dim), over: s(mix(c, white, 0.14)), under: s(mix(c, dark, 0.18)), fb: s(v.fade.base), ft: s(v.fade.tint), fd: s(v.fade.dim) };
+    v.ink = inkFor(v.tint); v.inkBase = inkFor(c);
+    return v;
+  });
+}
+
+function cellRGB(P, cols, i, mode, faded) {
+  const c = P.cells[i]; if (c === 255) return null;
+  const v = cols[c]; if (!v) return null; const done = P.done && P.done[i];
+  const src = faded ? v.fade : v;
+  if (mode === "sym") return done ? src.base : src.tint;
+  if (mode === "col") return done ? src.dim : src.base;
+  return src.base;
+}
+
+function buildBitmap(P, cols, mode, sel, hiOnly) {
+  const c = document.createElement("canvas"); c.width = P.w; c.height = P.h;
+  const x = c.getContext("2d"); const img = x.createImageData(P.w, P.h); const d = img.data;
+  const fab = hexToRgb(P.fabric.color || "#FAFAF6");
+  for (let i = 0; i < P.cells.length; i++) {
+    const ci = P.cells[i]; let rgb;
+    if (ci === 255) rgb = fab;
+    else {
+      const faded = hiOnly && sel >= 0 && ci !== sel;
+      if (mode === "real") { const v = cols[ci]; rgb = P.done[i] ? (faded ? v.fade.base : v.base) : mix(faded ? v.fade.base : v.base, fab, 0.75); }
+      else rgb = cellRGB(P, cols, i, mode === "final" ? "final" : mode, faded);
+    }
+    d[i * 4] = rgb[0]; d[i * 4 + 1] = rgb[1]; d[i * 4 + 2] = rgb[2]; d[i * 4 + 3] = 255;
+  }
+  x.putImageData(img, 0, 0); return c;
+}
+
+/* İlmekleri gerçekçi çiz: palete göre gruplanmış yollar */
+function drawStitches(ctx, P, cols, ox, oy, s, x0, y0, x1, y1, opt) {
+  const m = P.ratio === 4 ? 2 : 1, ss = s / m;
+  const n = P.palette.length;
+  const under = Array.from({ length: n }, () => new Path2D()), over = Array.from({ length: n }, () => new Path2D());
+  const gUnder = Array.from({ length: n }, () => new Path2D()), gOver = Array.from({ length: n }, () => new Path2D());
+  const used = new Uint8Array(n), gUsed = new Uint8Array(n);
+  const pad = ss * 0.16;
+  for (let y = y0; y < y1; y++) for (let x = x0; x < x1; x++) {
+    const i = y * P.w + x, c = P.cells[i]; if (c === 255) continue;
+    const ghost = opt.ghost && !P.done[i];
+    const U = ghost ? gUnder[c] : under[c], O = ghost ? gOver[c] : over[c];
+    if (ghost) gUsed[c] = 1; else used[c] = 1;
+    const half = P.palette[c].type === "h";
+    for (let sy = 0; sy < m; sy++) for (let sx = 0; sx < m; sx++) {
+      const X = ox + x * s + sx * ss, Y = oy + y * s + sy * ss;
+      // alttaki çapraz: sol alt -> sağ üst (yarım haç da budur)
+      U.moveTo(X + pad, Y + ss - pad); U.lineTo(X + ss - pad, Y + pad);
+      if (!half) { O.moveTo(X + pad, Y + pad); O.lineTo(X + ss - pad, Y + ss - pad); }
+    }
+  }
+  ctx.lineCap = "round";
+  const lw = Math.max(1, ss * 0.34);
+  for (let c = 0; c < n; c++) {
+    if (gUsed[c]) { ctx.globalAlpha = opt.hiOnly && opt.sel >= 0 && c !== opt.sel ? 0.08 : 0.22; ctx.lineWidth = lw; ctx.strokeStyle = cols[c].css.base; ctx.stroke(gUnder[c]); ctx.stroke(gOver[c]); }
+    if (used[c]) {
+      ctx.globalAlpha = opt.hiOnly && opt.sel >= 0 && c !== opt.sel ? 0.25 : 1;
+      ctx.lineWidth = lw; ctx.strokeStyle = cols[c].css.under; ctx.stroke(under[c]);
+      if (ss >= 6) { ctx.lineWidth = lw * 1.15; ctx.strokeStyle = "rgba(0,0,0,.18)"; ctx.stroke(over[c]); }
+      ctx.lineWidth = lw; ctx.strokeStyle = cols[c].css.over; ctx.stroke(over[c]);
+    }
+  }
+  ctx.globalAlpha = 1;
+}
+
+function drawExtras(ctx, P, cols, ox, oy, s, opt = {}) {
+  const hs = s / 2;
+  ctx.lineCap = "round";
+  for (const sg of P.back) {
+    const c = cols[sg[4]]; if (!c) continue;
+    ctx.globalAlpha = opt.hiOnly && opt.sel >= 0 && sg[4] !== opt.sel ? 0.3 : 1;
+    ctx.strokeStyle = c.css.base; ctx.lineWidth = Math.max(1.6, s * (P.ratio === 4 ? 0.09 : 0.16));
+    ctx.beginPath(); ctx.moveTo(ox + sg[0] * hs, oy + sg[1] * hs); ctx.lineTo(ox + sg[2] * hs, oy + sg[3] * hs); ctx.stroke();
+  }
+  for (const k of P.knots) {
+    const c = cols[k[2]]; if (!c) continue;
+    ctx.globalAlpha = opt.hiOnly && opt.sel >= 0 && k[2] !== opt.sel ? 0.3 : 1;
+    const r = Math.max(2.2, s * (P.ratio === 4 ? 0.17 : 0.3));
+    ctx.beginPath(); ctx.arc(ox + k[0] * hs, oy + k[1] * hs, r, 0, Math.PI * 2);
+    ctx.fillStyle = c.css.base; ctx.fill(); ctx.lineWidth = Math.max(1, r * 0.25); ctx.strokeStyle = "rgba(0,0,0,.45)"; ctx.stroke();
+  }
+  ctx.globalAlpha = 1;
+}
+
+/* Önizleme ve dışa aktarma için tüm şemayı tek tuvale çiz */
+function renderWhole(P, mode, cellPx, withGrid) {
+  const cols = palColors(P, [255, 255, 255]);
+  const c = document.createElement("canvas"); c.width = P.w * cellPx; c.height = P.h * cellPx;
+  const x = c.getContext("2d");
+  x.fillStyle = P.fabric.color || "#FAFAF6"; x.fillRect(0, 0, c.width, c.height);
+  if (mode === "final" && cellPx >= 3) {
+    if (cellPx >= 8) { x.fillStyle = "rgba(0,0,0,.05)"; for (let i = 0; i <= P.w * (P.ratio === 4 ? 2 : 1); i++) x.fillRect(i * cellPx / (P.ratio === 4 ? 2 : 1) - .5, 0, 1, c.height); for (let i = 0; i <= P.h * (P.ratio === 4 ? 2 : 1); i++) x.fillRect(0, i * cellPx / (P.ratio === 4 ? 2 : 1) - .5, c.width, 1); }
+    drawStitches(x, Object.assign({}, P, { done: new Uint8Array(P.cells.length).fill(1) }), cols, 0, 0, cellPx, 0, 0, P.w, P.h, {});
+  } else if (mode === "final") {
+    x.imageSmoothingEnabled = false; x.drawImage(buildBitmap(Object.assign({}, P, { done: new Uint8Array(P.cells.length).fill(1) }), cols, "final", -1, false), 0, 0, c.width, c.height);
+  } else {
+    x.font = `600 ${Math.floor(cellPx * 0.7)}px "IBM Plex Sans","DejaVu Sans",sans-serif`; x.textAlign = "center"; x.textBaseline = "middle";
+    for (let y = 0; y < P.h; y++) for (let xx = 0; xx < P.w; xx++) {
+      const ci = P.cells[y * P.w + xx]; if (ci === 255) continue;
+      x.fillStyle = cols[ci].css.tint; x.fillRect(xx * cellPx, y * cellPx, cellPx, cellPx);
+      if (cellPx >= 7) { x.fillStyle = cols[ci].ink; x.fillText(P.palette[ci].sym, xx * cellPx + cellPx / 2, y * cellPx + cellPx / 2 + cellPx * 0.04); }
+    }
+  }
+  if (withGrid && cellPx >= 4) gridLines(x, P, 0, 0, cellPx, c.width, c.height, mode === "final" ? 0 : 1);
+  drawExtras(x, P, cols, 0, 0, cellPx);
+  return c;
+}
+
+function gridLines(ctx, P, ox, oy, s, W, H, strength) {
+  if (!strength) return;
+  const x0 = Math.max(0, Math.floor(-ox / s)), x1 = Math.min(P.w, Math.ceil((W - ox) / s));
+  const y0 = Math.max(0, Math.floor(-oy / s)), y1 = Math.min(P.h, Math.ceil((H - oy) / s));
+  const top = Math.max(oy, 0), bot = Math.min(oy + P.h * s, H), lef = Math.max(ox, 0), rig = Math.min(ox + P.w * s, W);
+  if (s >= 6) {
+    ctx.fillStyle = "rgba(20,24,36,.16)";
+    for (let x = x0; x <= x1; x++) if (x % 10) ctx.fillRect(Math.round(ox + x * s) - .5, top, 1, bot - top);
+    for (let y = y0; y <= y1; y++) if (y % 10) ctx.fillRect(lef, Math.round(oy + y * s) - .5, rig - lef, 1);
+  }
+  ctx.fillStyle = "rgba(20,24,36,.55)";
+  const lw = s >= 10 ? 1.6 : 1;
+  for (let x = Math.ceil(x0 / 10) * 10; x <= x1; x += 10) ctx.fillRect(Math.round(ox + x * s) - lw / 2, top, lw, bot - top);
+  for (let y = Math.ceil(y0 / 10) * 10; y <= y1; y += 10) ctx.fillRect(lef, Math.round(oy + y * s) - lw / 2, rig - lef, lw);
+  if (P.w % 10) ctx.fillRect(Math.round(ox + P.w * s) - lw / 2, top, lw, bot - top);
+  if (P.h % 10) ctx.fillRect(lef, Math.round(oy + P.h * s) - lw / 2, rig - lef, lw);
+}
+
+function makeThumb(P) {
+  const k = Math.max(1, Math.floor(160 / Math.max(P.w, P.h)));
+  const cols = palColors(P, [255, 255, 255]);
+  const bm = buildBitmap(Object.assign({}, P, { done: new Uint8Array(P.cells.length).fill(1) }), cols, "final", -1, false);
+  const tw = Math.min(P.w * k, 160), th = Math.round(tw * P.h / P.w);
+  const c = document.createElement("canvas"); c.width = Math.max(1, tw); c.height = Math.max(1, th);
+  const x = c.getContext("2d"); x.imageSmoothingEnabled = k > 1 ? false : true; x.drawImage(bm, 0, 0, c.width, c.height);
+  return c.toDataURL("image/png");
+}
+
+/* ============ uygulama ============ */
+const App = { view: "list", listUnsub: null, projects: [] };
+function show(v) {
+  App.view = v;
+  $("#vList").classList.toggle("hidden", v !== "list");
+  $("#vNew").classList.toggle("hidden", v !== "new");
+  $("#vWork").classList.toggle("hidden", v !== "work");
+  $("#newBtn").classList.toggle("hidden", v === "new");
+  if (v !== "work") { Work.close(); if (typeof FS !== "undefined" && FS.on) FS.toggle(false); }
+  window.scrollTo(0, 0);
+}
+
+/* ---------- modal ---------- */
+function modal({ title, body, actions }) {
+  return new Promise(res => {
+    const root = $("#modalRoot");
+    const m = document.createElement("div"); m.className = "modal";
+    m.innerHTML = `<div class="dialog" role="dialog" aria-modal="true"><header><h2 style="font-size:19px"></h2></header><div class="dbody"></div><footer></footer></div>`;
+    m.querySelector("h2").textContent = title;
+    const b = m.querySelector(".dbody"); if (typeof body === "string") b.innerHTML = body; else if (body) b.appendChild(body);
+    const close = v => { m.remove(); document.removeEventListener("keydown", key); res(v); };
+    const key = e => { if (e.key === "Escape") close(null); };
+    document.addEventListener("keydown", key);
+    m.addEventListener("click", e => { if (e.target === m) close(null); });
+    actions.forEach(a => { const bt = document.createElement("button"); bt.className = "btn " + (a.cls || ""); bt.textContent = a.label; bt.onclick = () => close(a.value !== undefined ? a.value : (a.get ? a.get(m) : a.label)); m.querySelector("footer").appendChild(bt); });
+    root.appendChild(m); const f = m.querySelector("input,select,footer .primary"); f && f.focus();
+  });
+}
+const confirmBox = (title, text, ok = "Tamam", danger) => modal({ title, body: `<p style="margin:0 0 6px">${text}</p>`, actions: [{ label: "Vazgeç", value: false }, { label: ok, value: true, cls: danger ? "primary" : "primary" }] });
+
+/* iplik seçici */
+function threadPicker({ title, entry, allowType = true }) {
+  const wrap = document.createElement("div");
+  let A = entry ? entry.code : null, B = entry ? entry.code2 : null, type = entry ? entry.type : "x", slot = "A";
+  wrap.innerHTML = `
+    <div class="seg" style="margin-bottom:10px" id="tpSlot"><button data-v="A" class="on">1. iplik</button><button data-v="B">2. iplik (karışım)</button></div>
+    <div class="row" style="margin-bottom:8px"><div class="sw" id="tpSw" style="flex:none"></div><div class="small" id="tpLbl"></div><button class="btn ghost small nogrow" id="tpClr">2. ipliği kaldır</button></div>
+    <input type="text" id="tpQ" placeholder="DMC kodu ya da renk adı ara">
+    <div class="thread-list" id="tpList"></div>
+    ${allowType ? `<div class="field" style="margin-top:12px"><label>İlmek türü</label><div class="seg" id="tpType"><button data-v="x">Tam haç</button><button data-v="h">Yarım haç</button></div></div>` : ""}`;
+  const upd = () => {
+    const sw = wrap.querySelector("#tpSw"), lb = wrap.querySelector("#tpLbl");
+    if (A) { const e = makePalEntry(A, B); sw.style.background = B ? `linear-gradient(135deg, ${e.hexA} 50%, ${e.hexB} 50%)` : e.hex; lb.textContent = `${palLabel(e)} — ${palName(e)}`; } else { sw.style.background = "transparent"; lb.textContent = "Bir iplik seç"; }
+    wrap.querySelector("#tpClr").style.visibility = B ? "visible" : "hidden";
+    $$("#tpSlot button", wrap).forEach(b => b.classList.toggle("on", b.dataset.v === slot));
+    if (allowType) $$("#tpType button", wrap).forEach(b => b.classList.toggle("on", b.dataset.v === type));
+    list();
+  };
+  const list = () => {
+    const q = wrap.querySelector("#tpQ").value.trim().toLocaleLowerCase("tr");
+    const cur = slot === "A" ? A : B;
+    const items = DMC.filter(d => !q || d.code.toLowerCase().includes(q) || d.name.toLocaleLowerCase("tr").includes(q)).slice(0, 160);
+    wrap.querySelector("#tpList").innerHTML = items.map(d => `<button data-c="${esc(d.code)}" class="${d.code === cur ? "on" : ""}"><i style="background:${d.hex}"></i><b>${esc(d.code)}</b><span class="muted">${esc(d.name)}</span></button>`).join("") || `<p class="small muted" style="padding:8px">Eşleşen iplik yok.</p>`;
+  };
+  wrap.addEventListener("click", e => {
+    const t = e.target.closest("button"); if (!t) return;
+    if (t.dataset.c) { if (slot === "A") A = t.dataset.c; else B = t.dataset.c === A ? null : t.dataset.c; upd(); }
+    else if (t.closest("#tpSlot")) { slot = t.dataset.v; upd(); }
+    else if (t.closest("#tpType")) { type = t.dataset.v; upd(); }
+    else if (t.id === "tpClr") { B = null; slot = "A"; upd(); }
+  });
+  wrap.querySelector("#tpQ").addEventListener("input", list);
+  upd();
+  return modal({ title, body: wrap, actions: [{ label: "Vazgeç", value: null }, { label: "Uygula", cls: "primary", get: () => A ? { code: A, code2: B, type } : null }] });
+}
+
+/* ---------- liste ---------- */
+function startList() {
+  if (App.listUnsub) App.listUnsub();
+  App.listUnsub = Store.watchList(docs => { App.projects = docs; renderList(); }, (st, e) => { if (st === "slow") setSync("slow"); else if (st === "ok") Store.syncIdle(); else if (st === "error") { setSync("error", "Liste yüklenemedi"); } });
+}
+function renderList() {
+  const docs = App.projects.slice().sort((a, b) => (b.data.lastWorked || b.data.updatedAt || 0) - (a.data.lastWorked || a.data.updatedAt || 0));
+  $("#emptyList").classList.toggle("hidden", docs.length > 0);
+  $("#cards").innerHTML = docs.map(({ id, data: d }) => {
+    const pct = d.total ? Math.round(d.doneCount / d.total * 1000) / 10 : 0;
+    const f = d.fabric || {}; const per = spi(f); const m = d.ratio === 4 ? 2 : 1;
+    const wcm = d.w * m / per * 2.54, hcm = d.h * m / per * 2.54;
+    const when = d.lastWorked ? new Date(d.lastWorked).toLocaleDateString("tr-TR", { day: "numeric", month: "short" }) : "—";
+    return `<button class="card" data-id="${esc(id.slice(4))}"><div class="thumb">${d.thumb ? `<img src="${esc(d.thumb)}" alt="">` : ""}</div>
+      <div class="body"><h3>${esc(d.name || "Adsız çalışma")}</h3>
+      <div class="small muted">${fmt1(wcm)} × ${fmt1(hcm)} cm, ${(d.palette || []).length} renk, ${d.ratio === 4 ? "1:4" : "1:1"}</div>
+      <div class="bar"><i style="width:${pct}%"></i></div>
+      <div class="small row"><span><b>%${fmt1(pct)}</b> tamam</span><span class="muted" style="text-align:right">Son çalışma: ${when}</span></div></div></button>`;
+  }).join("");
+}
+$("#cards").addEventListener("click", e => { const c = e.target.closest(".card"); if (c) Work.open(c.dataset.id); });
+
+/* ---------- yeni / revize ---------- */
+const N = { adv: null, applyIdeal: false, img: null, src: null, fileName: "", S: null, px: null, pxKey: "", sug: null, P: null, editId: null, timer: 0, gen: 0, pv: "final" };
+function defaultSettings() {
+  return { fabricId: "a16", count: 16, over2: false, fabColor: "#FAFAF6", ratio: 1, widthCm: 20, widthSt: 126, margin: 5, colors: 24, blend: true, dither: false, cleanup: 1, bgEmpty: false, adj: { c: 0, s: 0, b: 0 }, stitch: "x", autoBack: false, backThr: 40, backColor: "dark", stitchMode: "auto", autoHalf: true, halfAmt: 1, autoBackSmart: true, autoKnots: true };
+}
+function curFabric(S) { const f = FABRICS.find(x => x.id === S.fabricId) || FABRICS[1]; return f.id === "custom" ? { id: "custom", count: S.count, over2: S.over2, color: S.fabColor } : { id: f.id, count: f.count, over2: f.over2, color: S.fabColor }; }
+
+function initNewForm() {
+  $("#fabric").innerHTML = FABRICS.map(f => `<option value="${f.id}">${esc(f.label)}</option>`).join("");
+  $("#fabColorSel").innerHTML = FAB_COLORS.map(([n, h]) => `<option value="${h}">${n}</option>`).join("") + `<option value="custom">Özel renk</option>`;
+  const segs = (id, key, num) => $(id).addEventListener("click", e => { const b = e.target.closest("button"); if (!b) return; N.S[key] = num ? +b.dataset.v : b.dataset.v; syncForm(); regen(); });
+  segs("#ratioSeg", "ratio", true); segs("#cleanSeg", "cleanup", true); segs("#stitchSeg", "stitch", false); segs("#modeSeg", "stitchMode", false); segs("#halfSeg", "halfAmt", true);
+  [["aHalf", "autoHalf"], ["aBack", "autoBackSmart"], ["aKnot", "autoKnots"]].forEach(([id, k]) => $("#" + id).onchange = () => { N.S[k] = $("#" + id).checked; syncForm(); regen(); });
+  $("#pvSeg").addEventListener("click", e => { const b = e.target.closest("button"); if (!b) return; N.pv = b.dataset.v; $$("#pvSeg button").forEach(x => x.classList.toggle("on", x === b)); drawPreview(); });
+  $("#fabric").onchange = () => { N.S.fabricId = $("#fabric").value; widthFromCm(); syncForm(); regen(); };
+  $("#fabCount").onchange = () => { N.S.count = clamp(+$("#fabCount").value || 14, 6, 40); widthFromCm(); syncForm(); regen(); };
+  $("#fabOver2").onchange = () => { N.S.over2 = $("#fabOver2").checked; widthFromCm(); syncForm(); regen(); };
+  $("#fabColorSel").onchange = () => { const v = $("#fabColorSel").value; if (v === "custom") $("#fabColor").click(); else { N.S.fabColor = v; syncForm(); drawPreview(); } };
+  $("#fabColor").oninput = () => { N.S.fabColor = $("#fabColor").value; syncForm(); drawPreview(); };
+  $("#wCm").onchange = () => { N.S.widthCm = clamp(+$("#wCm").value || 20, 2, 200); widthFromCm(); syncForm(); regen(); };
+  $("#wSt").onchange = () => { const st = clamp(Math.round(+$("#wSt").value || 100), 10, 1200); N.S.widthSt = st; N.S.widthCm = Math.round(st / spi(curFabric(N.S)) * 2.54 * 10) / 10; syncForm(); regen(); };
+  $("#margin").oninput = () => { N.S.margin = +$("#margin").value; syncForm(); updateStats(); };
+  $("#colors").oninput = () => { N.S.colors = +$("#colors").value; $("#colorsV").textContent = N.S.colors; regen(); };
+  ["blend", "dither", "bgEmpty", "autoBack"].forEach(k => $("#" + k).onchange = () => { N.S[k] = $("#" + k).checked; syncForm(); regen(); });
+  $("#backThr").oninput = () => { N.S.backThr = +$("#backThr").value; regen(); };
+  $("#backColor").onchange = () => { N.S.backColor = $("#backColor").value; regen(); };
+  [["adjC", "c"], ["adjS", "s"], ["adjB", "b"]].forEach(([id, k]) => $("#" + id).oninput = () => { N.S.adj[k] = +$("#" + id).value; N.pxKey = ""; regen(); });
+  $("#pName").oninput = () => {};
+  const drop = $("#drop");
+  $("#file").onchange = e => { const f = e.target.files[0]; if (f) loadFile(f); e.target.value = ""; };
+  drop.addEventListener("dragover", e => { e.preventDefault(); drop.classList.add("over"); });
+  drop.addEventListener("dragleave", () => drop.classList.remove("over"));
+  drop.addEventListener("drop", e => { e.preventDefault(); drop.classList.remove("over"); const f = e.dataTransfer.files[0]; if (f) loadFile(f); });
+  $("#srcChange").onclick = () => $("#file").click();
+  $("#newCancel").onclick = () => { if (N.editId) Work.open(N.editId); else { show("list"); } };
+  $("#saveBtn").onclick = saveNew;
+}
+function renderAdvice() {
+  const box = $("#advice"), adv = N.adv;
+  if (!adv || !N.img) { box.classList.add("hidden"); $("#qualNow").innerHTML = ""; return; }
+  const S = N.S, m = S.ratio === 4 ? 2 : 1, idealSt = adv.ideal * m, minSt = adv.min * m;
+  const fabs = ["a14", "a16", "a18", "e28", "e32"].map(id => FABRICS.find(f => f.id === id));
+  const cmOf = (f, st) => st / spi(f) * 2.54;
+  const hOf = st => Math.round(st * N.img.naturalHeight / N.img.naturalWidth);
+  box.innerHTML = `<div class="lbl">Bu resim için önerilen ölçü</div>
+    <div class="small">${adv.pixel ? `Resim küçük ve net pikselli; her piksel bir ilmek olursa birebir aktarılır: <b>${idealSt} ilmek</b> genişlik.` : `Bozulmadan aktarmak için ideal <b>${idealSt} ilmek</b> genişlik (en az ${minSt}). Yükseklik ${hOf(idealSt)} ilmek olur.`}</div>
+    <div class="fabs">${fabs.map(f => `<span class="chip" title="${esc(f.label)}">${esc(f.label.replace(" (2 iplik üzeri)", ""))}: ${fmt1(cmOf(f, idealSt))} cm</span>`).join("")}</div>
+    <div><button class="btn primary small" id="applyIdeal" style="min-height:32px;padding:5px 12px">İdeal ölçüyü ve renk sayısını uygula</button></div>`;
+  $("#applyIdeal").onclick = () => { N.S.widthSt = idealSt; N.S.widthCm = Math.round(idealSt / spi(curFabric(N.S)) * 2.54 * 10) / 10; N.applyIdeal = true; syncForm(); regen(true); };
+  box.classList.remove("hidden");
+  const cells = Math.round(S.widthSt / m);
+  const q = detailQuality(adv, cells);
+  $("#qualNow").innerHTML = q ? `<span class="qual ${q.cls}"><i></i>${q.t}</span>` : "";
+}
+function widthFromCm() { N.S.widthSt = Math.max(10, Math.round(N.S.widthCm / 2.54 * spi(curFabric(N.S)))); }
+function syncForm() {
+  const S = N.S;
+  $("#fabric").value = S.fabricId; $("#customFab").classList.toggle("hidden", S.fabricId !== "custom");
+  $("#fabCount").value = S.count; $("#fabOver2").checked = S.over2;
+  const known = FAB_COLORS.find(c => c[1].toLowerCase() === S.fabColor.toLowerCase());
+  $("#fabColorSel").value = known ? known[1] : "custom"; $("#fabColor").value = S.fabColor;
+  $$("#ratioSeg button").forEach(b => b.classList.toggle("on", +b.dataset.v === S.ratio));
+  $$("#cleanSeg button").forEach(b => b.classList.toggle("on", +b.dataset.v === S.cleanup));
+  $$("#stitchSeg button").forEach(b => b.classList.toggle("on", b.dataset.v === S.stitch));
+  $$("#modeSeg button").forEach(b => b.classList.toggle("on", b.dataset.v === S.stitchMode));
+  $$("#halfSeg button").forEach(b => b.classList.toggle("on", +b.dataset.v === (S.halfAmt ?? 1)));
+  $("#autoOpts").classList.toggle("hidden", S.stitchMode !== "auto"); $("#manualOpts").classList.toggle("hidden", S.stitchMode === "auto");
+  $("#aHalf").checked = S.autoHalf !== false; $("#aBack").checked = S.autoBackSmart !== false; $("#aKnot").checked = S.autoKnots !== false;
+  $("#halfAmtF").classList.toggle("hidden", S.autoHalf === false);
+  $("#modeHint").textContent = S.stitchMode === "auto" ? "Uygulama her kare için resme bakarak tam haç, yarım haç, backstitch ve Fransız düğümü arasında seçim yapar." : "Tüm şema seçtiğin ilmekle işlenir.";
+  $("#ratioHint").textContent = S.ratio === 4 ? "Her simge 2×2 = 4 haç ilmeği. Şema sadeleşir, büyük ve hızlı işlerde kullanılır." : "Her kare tek bir haç ilmeğidir; en fazla ayrıntıyı verir.";
+  $("#wCm").value = S.widthCm; $("#wSt").value = S.widthSt;
+  $("#margin").value = S.margin; $("#marginV").textContent = S.margin + " cm";
+  $("#colors").value = S.colors; $("#colorsV").textContent = S.colors;
+  $("#blend").checked = S.blend; $("#dither").checked = S.dither; $("#bgEmpty").checked = S.bgEmpty; $("#autoBack").checked = S.autoBack;
+  $("#backOpts").classList.toggle("hidden", !S.autoBack); $("#backThr").value = S.backThr; $("#backColor").value = S.backColor;
+  if (N.adv) { const q = detailQuality(N.adv, Math.round(S.widthSt / (S.ratio === 4 ? 2 : 1))); $("#qualNow").innerHTML = q ? `<span class="qual ${q.cls}"><i></i>${q.t}</span>` : ""; }
+  $("#adjC").value = S.adj.c; $("#adjS").value = S.adj.s; $("#adjB").value = S.adj.b;
+  if (N.img) { const d = computeDims(Object.assign({}, S, { fabric: curFabric(S) }), N.img.naturalWidth, N.img.naturalHeight); $("#hInfo").textContent = `Yükseklik: ${fmt1(d.hCm)} cm (${d.sh} ilmek). Oran resimden alınır.`; }
+}
+
+function openNew(editP) {
+  N.editId = editP ? editP.id : null; N.adv = null; N.applyIdeal = false; $("#advice").classList.add("hidden"); $("#qualNow").innerHTML = ""; N.P = null; N.px = null; N.pxKey = ""; N.sug = null;
+  $("#newTitle").textContent = editP ? "Ölçü ve ayarları revize et" : "Yeni şablon";
+  $("#newSub").textContent = editP ? "Bitmiş boyutu, kumaşı ya da renkleri değiştir. Ölçü değişirse ilerleme sıfırlanır." : "Resmi yükle, ayarları değiştirdikçe önizleme güncellenir.";
+  $("#saveBtn").textContent = editP ? "Değişiklikleri kaydet" : "Şablonu oluştur";
+  N.S = editP && editP.settings ? JSON.parse(JSON.stringify(Object.assign(defaultSettings(), editP.settings.stitchMode ? {} : { stitchMode: "manual" }, editP.settings))) : defaultSettings();
+  $("#pName").value = editP ? editP.name : "";
+  N.img = null; N.src = null;
+  $("#drop").classList.toggle("hidden", !!editP); $("#srcInfo").classList.add("hidden");
+  $("#pv").classList.add("hidden"); $("#pvEmpty").classList.remove("hidden"); $("#pvEmpty").textContent = editP ? "Kaynak resim yükleniyor…" : "Önizleme için bir resim yükle.";
+  $("#stats").innerHTML = ""; $("#palMini").innerHTML = ""; $("#warnBox").innerHTML = ""; $("#saveBtn").disabled = true;
+  $("#suggest").innerHTML = "<span>Resim yüklenince önerilir.</span>";
+  syncForm(); show("new");
+  if (editP) Store.get("img_" + editP.id).then(d => {
+    if (!d || !d.src) { $("#pvEmpty").textContent = "Kaynak resim bulunamadı. Yeni bir resim yükleyebilirsin."; $("#drop").classList.remove("hidden"); return; }
+    const im = new Image(); im.onload = () => setImage(im, d.src, editP.name, true); im.src = d.src;
+  });
+}
+
+function loadFile(f) {
+  if (!f.type.startsWith("image/")) { toast("Bu dosya bir resim değil."); return; }
+  const r = new FileReader();
+  r.onload = () => { const im = new Image(); im.onload = () => { const src = shrinkSource(im); const im2 = new Image(); im2.onload = () => setImage(im2, src, f.name.replace(/\.[^.]+$/, ""), false); im2.src = src; }; im.onerror = () => toast("Resim açılamadı."); im.src = r.result; };
+  r.readAsDataURL(f);
+}
+function shrinkSource(im) {
+  let max = 900, q = 0.86, out = "";
+  const hasAlpha = (() => { const c = document.createElement("canvas"); c.width = 48; c.height = 48; const x = c.getContext("2d"); x.drawImage(im, 0, 0, 48, 48); const d = x.getImageData(0, 0, 48, 48).data; for (let i = 3; i < d.length; i += 4) if (d[i] < 250) return true; return false; })();
+  for (let t = 0; t < 8; t++) {
+    const k = Math.min(1, max / Math.max(im.naturalWidth, im.naturalHeight));
+    const c = document.createElement("canvas"); c.width = Math.max(1, Math.round(im.naturalWidth * k)); c.height = Math.max(1, Math.round(im.naturalHeight * k));
+    const x = c.getContext("2d"); x.imageSmoothingQuality = "high"; x.drawImage(im, 0, 0, c.width, c.height);
+    out = hasAlpha ? c.toDataURL("image/png") : c.toDataURL("image/jpeg", q);
+    if (out.length < 230000) break; max = Math.round(max * 0.82); q = Math.max(0.7, q - 0.04);
+  }
+  return out;
+}
+function setImage(im, src, name, keep) {
+  N.img = im; N.src = src; N.fileName = name; N.srcChanged = !keep; N.pxKey = ""; N.px2Key = ""; N.sug = null;
+  $("#srcThumb").src = src; $("#srcName").textContent = name || "Resim"; $("#srcDim").textContent = `${im.naturalWidth} × ${im.naturalHeight} piksel`;
+  $("#srcInfo").classList.remove("hidden"); $("#drop").classList.add("hidden");
+  if (!$("#pName").value) $("#pName").value = (name || "").slice(0, 60);
+  N.adv = analyzeDetail(im);
+  if (!keep) { widthFromCm(); }
+  renderAdvice(); syncForm(); regen(true);
+}
+
+function regen(now) {
+  if (!N.img) return; clearTimeout(N.timer); $("#pvBusy").classList.remove("hidden");
+  N.timer = setTimeout(() => requestAnimationFrame(() => setTimeout(doRegen, 0)), now ? 0 : 260);
+}
+function doRegen() {
+  const S = N.S, fab = curFabric(S); const SS = Object.assign({}, S, { fabric: fab });
+  const d = computeDims(SS, N.img.naturalWidth, N.img.naturalHeight);
+  const key = [d.cw, d.ch, S.adj.c, S.adj.s, S.adj.b].join(",");
+  if (key !== N.pxKey) { N.px = samplePixels(N.img, d.cw, d.ch, S.adj); N.pxKey = key; N.sug = suggestColors(N.px, d.cw * d.ch); }
+  if (S.stitchMode === "auto" && (S.autoBackSmart || S.autoKnots)) { if (N.px2Key !== key) { N.px2 = samplePixels(N.img, d.cw * 2, d.ch * 2, S.adj); N.px2Key = key; } } 
+  if (N.applyIdeal && N.sug) { N.applyIdeal = false; S.colors = N.sug.k; syncForm(); }
+  const r = buildPattern(N.px, d, S, S.stitchMode === "auto" ? N.px2 : null);
+  $("#pvBusy").classList.add("hidden");
+  if (!r) { $("#pvEmpty").textContent = "Resimde işlenecek alan bulunamadı."; $("#pvEmpty").classList.remove("hidden"); $("#pv").classList.add("hidden"); $("#saveBtn").disabled = true; return; }
+  N.P = Object.assign(r, { ratio: S.ratio, fabric: fab, done: new Uint8Array(r.cells.length), dims: d });
+  $("#saveBtn").disabled = false;
+  $("#suggest").innerHTML = N.sug ? `<span>Bu ölçüde renk geçişlerinin bozulmaması için önerilen:</span><button class="chip" id="useSug">${N.sug.k} renk</button>${S.colors < N.sug.k ? `<span>Şu anki ${S.colors} renk ile tonlar basamaklı görünebilir.</span>` : ""}` : "";
+  const us = $("#useSug"); if (us) us.onclick = () => { N.S.colors = N.sug.k; syncForm(); regen(true); };
+  drawPreview(); updateStats(); renderAdvice();
+}
+function drawPreview() {
+  if (!N.P || !N.img) return;
+  const P = N.P; P.fabric.color = N.S.fabColor;
+  const cv = $("#pv"); const stage = $("#pvStage");
+  const maxW = Math.max(240, stage.clientWidth - 32), maxH = Math.max(300, Math.min(window.innerHeight * 0.7, 820));
+  let c;
+  if (N.pv === "src") { c = document.createElement("canvas"); const k = Math.min(maxW / N.img.naturalWidth, maxH / N.img.naturalHeight, 1); c.width = Math.round(N.img.naturalWidth * k); c.height = Math.round(N.img.naturalHeight * k); c.getContext("2d").drawImage(N.img, 0, 0, c.width, c.height); }
+  else { const px = clamp(Math.floor(Math.min(maxW / P.w, maxH / P.h) * (window.devicePixelRatio || 1)), 1, 24); c = renderWhole(P, N.pv === "sym" ? "sym" : "final", px, N.pv === "sym"); }
+  cv.width = c.width; cv.height = c.height; cv.getContext("2d").drawImage(c, 0, 0);
+  const dpr = N.pv === "src" ? 1 : (window.devicePixelRatio || 1);
+  cv.style.width = Math.min(c.width / dpr, maxW) + "px";
+  cv.classList.remove("hidden"); $("#pvEmpty").classList.add("hidden");
+}
+function updateStats() {
+  if (!N.P) return; const P = N.P, S = N.S; const d = computeDims(Object.assign({}, S, { fabric: P.fabric }), N.img.naturalWidth, N.img.naturalHeight);
+  const total = P.cells.reduce((a, c) => a + (c !== 255), 0) * (S.ratio === 4 ? 4 : 1);
+  const use = threadUsage(P); const sk = use.reduce((a, u) => a + Math.ceil(u.skeins), 0);
+  const blends = P.palette.filter(p => p.code2).length;
+  $("#stats").innerHTML = `
+    <div><b>${fmt1(d.wCm)} × ${fmt1(d.hCm)} cm</b><span>Bitmiş iş</span></div>
+    <div><b>${fmt1(d.wCm + 2 * S.margin)} × ${fmt1(d.hCm + 2 * S.margin)} cm</b><span>Kesilecek kumaş</span></div>
+    <div><b>${d.sw} × ${d.sh}</b><span>İlmek (haç) ölçüsü</span></div>
+    <div><b>${P.w} × ${P.h}</b><span>Şema karesi (${S.ratio === 4 ? "1:4" : "1:1"})</span></div>
+    <div><b>${new Set(P.palette.filter(p => !p.backOnly || true).map(p => p.code + "+" + (p.code2 || ""))).size}${blends ? ` <span style="font-size:13px;font-weight:500">(${blends} karışım)</span>` : ""}</b><span>Renk${P.palette.some(p => p.type === "h") && P.palette.some(p => p.type !== "h") ? ` (${P.palette.length} simge)` : ""}</span></div>
+    <div><b>${fmt(total)}</b><span>Toplam haç</span></div>
+    <div><b>≈ ${sk} çile</b><span>${strandsFor(P.fabric)} tel ile, DMC 8 m</span></div>
+    <div><b>${P.back.length || P.knots.length ? `${fmt(P.back.length)} / ${fmt(P.knots.length)}` : "—"}</b><span>Backstitch / düğüm</span></div>`;
+  const a = P.auto, sum = $("#autoSum");
+  if (a && S.stitchMode === "auto") {
+    const m = S.ratio === 4 ? 4 : 1, parts = [];
+    parts.push(a.half ? `${fmt(a.half * m)} haç yarım haç olarak işlenecek` : "yarım haça uygun düz alan bulunmadı");
+    if (a.lines) parts.push(`${fmt(a.lines)} ince çizgi backstitch oldu`);
+    if (a.contour) parts.push(`çizim tarzı resim algılandı, ${fmt(a.contour)} dış hat konturlandı`);
+    if (!a.lines && !a.contour && S.autoBackSmart) parts.push("backstitch gerektiren ince çizgi yok");
+    parts.push(a.knots ? `${fmt(a.knots)} Fransız düğümü eklendi` : "düğüm gerektiren nokta yok");
+    sum.textContent = "Karar: " + parts.join("; ") + "."; sum.classList.remove("hidden");
+  } else sum.classList.add("hidden");
+  $("#palMini").innerHTML = P.palette.map(p => `<i title="${esc(palLabel(p) + " " + palName(p))}" style="background:${p.code2 ? `linear-gradient(135deg,${p.hexA} 50%,${p.hexB} 50%)` : p.hex}"></i>`).join("");
+  let w = ""; if (d.clamped) w += `<div class="warn">Şema ${fmt(MAX_CELLS)} kare sınırına göre küçültüldü. Daha büyük iş için 1:4 ölçeğini ya da daha seyrek kumaşı dene.</div>`;
+  if (d.cw < 30) w += `<div class="warn">Şema çok küçük; ayrıntılar kaybolabilir. Genişliği artırmayı düşün.</div>`;
+  $("#warnBox").innerHTML = w;
+}
+
+async function saveNew() {
+  if (!N.P) return;
+  if (Store.mode === "none") { toast("Bu görünümde kayıt yapılamıyor."); return; }
+  const P = N.P, S = N.S, name = ($("#pName").value || N.fileName || "Adsız çalışma").trim().slice(0, 60);
+  const id = N.editId || uid();
+  let doneBits = new Uint8Array(P.cells.length), prev = null;
+  if (N.editId) {
+    prev = await Store.get("prj_" + id);
+    if (prev && (prev.w !== P.w || prev.h !== P.h) && prev.doneCount > 0) {
+      if (!await confirmBox("İlerleme sıfırlanacak", `Şema ölçüsü ${prev.w}×${prev.h} kareden ${P.w}×${P.h} kareye değişiyor. İşaretlediğin ${fmt(prev.doneCount)} kare sıfırlanır.`, "Kaydet ve sıfırla")) return;
+    } else if (prev && prev.done) { const old = decodeBits(prev.done, P.cells.length); for (let i = 0; i < old.length; i++) if (P.cells[i] !== 255) doneBits[i] = old[i]; }
+  }
+  $("#saveBtn").disabled = true; setSync("saving");
+  const pal = P.palette.map(p => Object.assign({}, p));
+  const total = P.cells.reduce((a, c) => a + (c !== 255), 0);
+  const doneCount = doneBits.reduce((a, v, i) => a + (v && P.cells[i] !== 255 ? 1 : 0), 0);
+  const now = Date.now(), rev = (prev && prev.rev || 0) + 1;
+  const prj = { kind: "project", name, createdAt: prev ? prev.createdAt || now : now, updatedAt: now, by: DEVICE, w: P.w, h: P.h, ratio: S.ratio, fabric: P.fabric, margin: S.margin, palette: pal, settings: S, thumb: makeThumb(P), total, doneCount, done: encodeBits(doneBits), rev, lastWorked: prev ? prev.lastWorked || now : now };
+  const pat = { kind: "pattern", w: P.w, h: P.h, cells: encodeCells(P.cells), back: P.back.flat(), knots: P.knots.flat(), rev, by: DEVICE };
+  if (prev) { const op = await Store.get("pat_" + id);
+    if (S.stitchMode !== "auto" && op && op.knots && op.knots.length && op.w === P.w && op.h === P.h) {
+      const remap = oi => { const o = (prev.palette || [])[oi]; if (!o) return -1; let ni = pal.findIndex(p => p.code === o.code && p.code2 === o.code2); if (ni < 0) { const e = makePalEntry(o.code, o.code2, "x"); e.backOnly = true; e.sym = SYMBOLS[pal.length % SYMBOLS.length]; pal.push(e); ni = pal.length - 1; } return ni; };
+      for (let i = 0; i + 2 < op.knots.length; i += 3) { const ni = remap(op.knots[i + 2]); if (ni >= 0) pat.knots.push(op.knots[i], op.knots[i + 1], ni); }
+    } }
+  try {
+    if (!N.editId || !prev) await Store.set("img_" + id, { kind: "image", src: N.src });
+    else if (N.srcChanged) await Store.set("img_" + id, { kind: "image", src: N.src });
+    await Store.set("pat_" + id, pat);
+    await Store.set("prj_" + id, prj);
+    setSync("saved"); Work.open(id);
+  } catch (e) { writeErr(e); $("#saveBtn").disabled = false; }
+}
+
+/* ============ çalışma ekranı ============ */
+const chunk = (a, n) => { const o = []; for (let i = 0; i + n - 1 < (a || []).length; i += n) o.push(a.slice(i, i + n)); return o; };
+const Work = {
+  P: null, unsubs: [], V: { s: 10, x: 0, y: 0 }, W: 0, H: 0, dpr: 1, mode: "sym", tool: "mark", edit: false, sel: -1, hiOnly: false,
+  cols: null, bmp: null, bmpDirty: true, undoStack: [], tProg: 0, tPat: 0, inflight: 0, raf: 0, ptrs: new Map(), g: null, st: null, hover: null, counts: null, panelT: 0,
+
+  async open(id) {
+    this.close(); show("work"); $("#wTitle").textContent = "Yükleniyor…"; $("#legend").innerHTML = "";
+    let prj, pat;
+    try { [prj, pat] = await Promise.all([Store.get("prj_" + id), Store.get("pat_" + id)]); } catch (e) { prj = null; }
+    if (!prj || !pat) { toast("Çalışma açılamadı."); show("list"); return; }
+    if (App.view !== "work") return;
+    this.P = this.fromDocs(id, prj, pat); this.undoStack = []; this.sel = -1; this.counts = null; this.bmp = null;
+    this.recolor(); this.calcCounts();
+    this.tool = "mark"; this.setEdit(false);
+    $("#viewMode").value = this.mode; $("#undoBtn").disabled = true; this.resize(true); this.renderPanels(); this.setTab(this.tab || "colors");
+    this.unsubs.push(Store.watch("prj_" + id, (d, md) => this.remotePrj(d, md)));
+    this.unsubs.push(Store.watch("pat_" + id, (d, md) => this.remotePat(d, md)));
+  },
+  close() { if (this.P) this.flush(); this.unsubs.forEach(u => { try { u(); } catch (e) {} }); this.unsubs = []; this.P = null; },
+  fromDocs(id, prj, pat) {
+    const n = prj.w * prj.h;
+    return { id, name: prj.name, w: prj.w, h: prj.h, ratio: prj.ratio, fabric: prj.fabric, margin: prj.margin, settings: prj.settings, palette: (prj.palette || []).map(p => Object.assign({}, p)),
+      cells: decodeCells(pat.cells, n), done: decodeBits(prj.done, n), back: chunk(pat.back, 5), knots: chunk(pat.knots, 3), rev: pat.rev || 1, updatedAt: prj.updatedAt || 0, createdAt: prj.createdAt, lastWorked: prj.lastWorked };
+  },
+  remotePrj(d, md) {
+    const P = this.P; if (!P) return;
+    if (!d) { toast("Bu çalışma başka bir cihazdan silindi."); show("list"); return; }
+    if (d.by === DEVICE || (d.updatedAt || 0) <= P.updatedAt || this.tProg || this.tPat || this.inflight) return;
+    if (d.w !== P.w || d.h !== P.h) { this.open(P.id); return; }
+    P.done = decodeBits(d.done, P.w * P.h); P.palette = (d.palette || []).map(p => Object.assign({}, p)); P.name = d.name; P.updatedAt = d.updatedAt;
+    P.fabric = d.fabric; P.settings = d.settings; P.margin = d.margin;
+    this.recolor(); this.dirty(); this.renderPanels();
+  },
+  remotePat(d, md) {
+    const P = this.P; if (!P || !d) return;
+    if (d.by === DEVICE || (d.rev || 0) <= P.rev || this.tPat || this.inflight) return;
+    if (d.w !== P.w || d.h !== P.h) return;
+    P.cells = decodeCells(d.cells, P.w * P.h); P.back = chunk(d.back, 5); P.knots = chunk(d.knots, 3); P.rev = d.rev; this.undoStack = [];
+    this.dirty(); this.renderPanels();
+  },
+
+  /* ---------- kayıt ---------- */
+  progressChanged() { const P = this.P; P.lastWorked = Date.now(); clearTimeout(this.tProg); this.tProg = setTimeout(() => this.saveProgress(), 1200); setSync("saving"); },
+  patternChanged() { clearTimeout(this.tPat); this.tPat = setTimeout(() => this.savePattern(), 1500); setSync("saving"); },
+  stats() { const P = this.P; let t = 0, d = 0; for (let i = 0; i < P.cells.length; i++) if (P.cells[i] !== 255) { t++; if (P.done[i]) d++; } return { total: t, doneCount: d }; },
+  async saveProgress() {
+    const P = this.P; this.tProg = 0; if (!P || this.tPat) return; const id = P.id;
+    const now = Date.now(); P.updatedAt = now; const st = this.stats();
+    this.inflight++;
+    try { await Store.update("prj_" + id, { done: encodeBits(P.done), doneCount: st.doneCount, total: st.total, updatedAt: now, by: DEVICE, lastWorked: P.lastWorked || now }); setSync("saved"); }
+    catch (e) { writeErr(e); } finally { this.inflight--; }
+  },
+  async savePattern() {
+    const P = this.P; this.tPat = 0; if (!P) return; clearTimeout(this.tProg); this.tProg = 0; const id = P.id;
+    P.rev++; const now = Date.now(); P.updatedAt = now; const st = this.stats();
+    this.inflight++;
+    try {
+      await Store.set("pat_" + id, { kind: "pattern", w: P.w, h: P.h, cells: encodeCells(P.cells), back: P.back.flat(), knots: P.knots.flat(), rev: P.rev, by: DEVICE });
+      await Store.update("prj_" + id, { palette: P.palette, thumb: makeThumb(P), done: encodeBits(P.done), doneCount: st.doneCount, total: st.total, updatedAt: now, by: DEVICE, rev: P.rev, name: P.name, lastWorked: P.lastWorked || now });
+      setSync("saved");
+    } catch (e) { writeErr(e); } finally { this.inflight--; }
+  },
+  flush() { if (this.tPat) { clearTimeout(this.tPat); this.savePattern(); } else if (this.tProg) { clearTimeout(this.tProg); this.saveProgress(); } },
+
+  /* ---------- görünüm ---------- */
+  recolor() { const bg = hexToRgb(cssVar("--canvas") || "#E4E6E1"); this.cols = palColors(this.P, bg); this.bgCss = cssVar("--canvas"); this.dirty(); },
+  dirty() { this.bmpDirty = true; this.req(); this.panelSoon(); },
+  req() { if (!this.raf) this.raf = requestAnimationFrame(() => { this.raf = 0; this.draw(); }); },
+  resize(fit) {
+    const w = $("#cWrap"); const r = w.getBoundingClientRect(); this.dpr = window.devicePixelRatio || 1;
+    if (r.width < 10 || r.height < 10) return;
+    const cv = $("#cv"); cv.width = Math.round(r.width * this.dpr); cv.height = Math.round(r.height * this.dpr);
+    const first = !this.W; this.W = r.width; this.H = r.height;
+    if (fit || first) this.fit(); else this.req();
+  },
+  fit() { const P = this.P; if (!P) return; const s = Math.max(0.5, Math.min((this.W - RUL - 24) / P.w, (this.H - RUL - 24) / P.h)); this.V = { s, x: RUL + (this.W - RUL - P.w * s) / 2, y: RUL + (this.H - RUL - P.h * s) / 2 }; this.req(); },
+  zoomAt(f, px, py) { const V = this.V, ns = clamp(V.s * f, 0.5, 90); V.x = px - (px - V.x) * ns / V.s; V.y = py - (py - V.y) * ns / V.s; V.s = ns; this.req(); },
+
+  draw() {
+    const P = this.P; if (!P || !this.W) return;
+    const cv = $("#cv"), ctx = cv.getContext("2d"), V = this.V, s = V.s, W = this.W, H = this.H, mode = this.mode;
+    ctx.setTransform(this.dpr, 0, 0, this.dpr, 0, 0);
+    ctx.fillStyle = this.bgCss || "#E4E6E1"; ctx.fillRect(0, 0, W, H);
+    const x0 = Math.max(0, Math.floor((RUL - V.x) / s)), x1 = Math.min(P.w, Math.ceil((W - V.x) / s));
+    const y0 = Math.max(0, Math.floor((RUL - V.y) / s)), y1 = Math.min(P.h, Math.ceil((H - V.y) / s));
+    const hi = this.hiOnly && this.sel >= 0;
+    // gölge ve kumaş
+    ctx.fillStyle = "rgba(0,0,0,.18)"; ctx.fillRect(V.x + 3, V.y + 3, P.w * s, P.h * s);
+    const useBmp = (mode === "sym" || mode === "col") ? s < 9 : s < 5;
+    if (useBmp) {
+      if (this.bmpDirty || !this.bmp) { this.bmp = buildBitmap(P, this.cols, mode, this.sel, this.hiOnly); this.bmpDirty = false; }
+      ctx.imageSmoothingEnabled = false; ctx.drawImage(this.bmp, V.x, V.y, P.w * s, P.h * s);
+    } else if (mode === "sym" || mode === "col") {
+      ctx.fillStyle = P.fabric.color || "#FAFAF6"; ctx.fillRect(V.x, V.y, P.w * s, P.h * s);
+      const symOn = mode === "sym" && s >= 10;
+      if (symOn) { ctx.font = `600 ${Math.floor(s * 0.6)}px "IBM Plex Sans","DejaVu Sans",sans-serif`; ctx.textAlign = "center"; ctx.textBaseline = "middle"; }
+      for (let y = y0; y < y1; y++) for (let x = x0; x < x1; x++) {
+        const i = y * P.w + x, c = P.cells[i]; if (c === 255) continue;
+        const v = this.cols[c], f = hi && c !== this.sel, dn = P.done[i];
+        ctx.fillStyle = mode === "sym" ? (dn ? (f ? v.css.fb : v.css.base) : (f ? v.css.ft : v.css.tint)) : (dn ? (f ? v.css.fd : v.css.dim) : (f ? v.css.fb : v.css.base));
+        ctx.fillRect(V.x + x * s, V.y + y * s, s + 0.5, s + 0.5);
+        if (symOn && !dn) { ctx.fillStyle = f ? "rgba(0,0,0,.2)" : v.ink; ctx.fillText(P.palette[c].sym, V.x + x * s + s / 2, V.y + y * s + s / 2 + s * 0.04); }
+        else if (mode === "col" && dn && s >= 12) { ctx.fillStyle = v.inkBase === "#fff" ? "rgba(255,255,255,.55)" : "rgba(0,0,0,.45)"; ctx.fillRect(V.x + x * s + s * 0.38, V.y + y * s + s * 0.38, s * 0.24, s * 0.24); }
+      }
+    } else {
+      ctx.fillStyle = P.fabric.color || "#FAFAF6"; ctx.fillRect(V.x, V.y, P.w * s, P.h * s);
+      const m = P.ratio === 4 ? 2 : 1;
+      if (s / m >= 7) { ctx.fillStyle = "rgba(0,0,0,.06)"; for (let x = x0 * m; x <= x1 * m; x++) ctx.fillRect(V.x + x * s / m - .5, Math.max(V.y, 0), 1, Math.min(P.h * s, H)); for (let y = y0 * m; y <= y1 * m; y++) ctx.fillRect(Math.max(V.x, 0), V.y + y * s / m - .5, Math.min(P.w * s, W), 1); }
+      drawStitches(ctx, P, this.cols, V.x, V.y, s, x0, y0, x1, y1, { ghost: mode === "real", hiOnly: this.hiOnly, sel: this.sel });
+    }
+    if (mode !== "final") gridLines(ctx, P, V.x, V.y, s, W, H, 1);
+    drawExtras(ctx, P, this.cols, V.x, V.y, s, { hiOnly: this.hiOnly, sel: this.sel });
+    // backstitch önizleme
+    if (this.st && this.st.kind === "back" && this.st.b) {
+      const a = this.st.a, b = this.st.b, hs = s / 2; ctx.setLineDash([4, 3]); ctx.strokeStyle = cssVar("--accent"); ctx.lineWidth = 2;
+      ctx.beginPath(); ctx.moveTo(V.x + a[0] * hs, V.y + a[1] * hs); ctx.lineTo(V.x + b[0] * hs, V.y + b[1] * hs); ctx.stroke(); ctx.setLineDash([]);
+    }
+    // seçili hücre çerçevesi
+    if (this.hover && s >= 6) { const [hx, hy] = this.hover; ctx.strokeStyle = cssVar("--accent"); ctx.lineWidth = 2; ctx.strokeRect(V.x + hx * s, V.y + hy * s, s, s); }
+    this.rulers(ctx);
+  },
+  rulers(ctx) {
+    const P = this.P, V = this.V, s = V.s, W = this.W, H = this.H;
+    ctx.fillStyle = cssVar("--surface"); ctx.fillRect(0, 0, W, RUL); ctx.fillRect(0, 0, RUL, H);
+    ctx.fillStyle = cssVar("--line"); ctx.fillRect(0, RUL - 1, W, 1); ctx.fillRect(RUL - 1, 0, 1, H);
+    ctx.fillStyle = cssVar("--muted"); ctx.font = `500 11px "IBM Plex Sans",sans-serif`; ctx.textBaseline = "middle";
+    const step = s * 10 >= 34 ? 10 : s * 20 >= 34 ? 20 : s * 50 >= 34 ? 50 : 100;
+    ctx.textAlign = "center";
+    for (let x = 0; x <= P.w; x += step) { const px = V.x + x * s; if (px < RUL + 8 || px > W - 4) continue; ctx.fillText(String(x), px, RUL / 2); ctx.fillRect(px - .5, RUL - 6, 1, 5); }
+    ctx.save(); ctx.translate(RUL / 2, 0); ctx.rotate(-Math.PI / 2);
+    for (let y = 0; y <= P.h; y += step) { const py = V.y + y * s; if (py < RUL + 8 || py > H - 4) continue; ctx.fillText(String(y), -py, 0); }
+    ctx.restore();
+    for (let y = 0; y <= P.h; y += step) { const py = V.y + y * s; if (py < RUL + 8 || py > H - 4) continue; ctx.fillRect(RUL - 6, py - .5, 5, 1); }
+    // orta noktalar
+    ctx.fillStyle = cssVar("--accent");
+    const cx = V.x + (P.w / 2) * s, cy = V.y + (P.h / 2) * s;
+    if (cx > RUL && cx < W) { ctx.beginPath(); ctx.moveTo(cx - 6, 2); ctx.lineTo(cx + 6, 2); ctx.lineTo(cx, 11); ctx.fill(); }
+    if (cy > RUL && cy < H) { ctx.beginPath(); ctx.moveTo(2, cy - 6); ctx.lineTo(2, cy + 6); ctx.lineTo(11, cy); ctx.fill(); }
+    ctx.fillStyle = cssVar("--surface"); ctx.fillRect(0, 0, RUL - 1, RUL - 1);
+  },
+
+  /* ---------- etkileşim ---------- */
+  cellAt(px, py) { const V = this.V, P = this.P; const x = Math.floor((px - V.x) / V.s), y = Math.floor((py - V.y) / V.s); return x >= 0 && y >= 0 && x < P.w && y < P.h ? [x, y] : null; },
+  pointAt(px, py) { const V = this.V, P = this.P; const k = P.ratio === 4 ? 2 : 1; let x = Math.round((px - V.x) / V.s * k), y = Math.round((py - V.y) / V.s * k); const f = k === 2 ? 1 : 2; x *= f; y *= f; return [clamp(x, 0, P.w * 2), clamp(y, 0, P.h * 2)]; },
+  local(e) { const r = $("#cv").getBoundingClientRect(); return [e.clientX - r.left, e.clientY - r.top]; },
+  down(e) {
+    if (!this.P) return; const cv = $("#cv"); cv.setPointerCapture(e.pointerId);
+    const [px, py] = this.local(e); this.ptrs.set(e.pointerId, [px, py]);
+    if (this.ptrs.size === 2) { this.endStroke(true); const [a, b] = [...this.ptrs.values()]; const mid = [(a[0] + b[0]) / 2, (a[1] + b[1]) / 2]; this.g = { d: Math.hypot(a[0] - b[0], a[1] - b[1]) || 1, wx: (mid[0] - this.V.x) / this.V.s, wy: (mid[1] - this.V.y) / this.V.s, s: this.V.s }; return; }
+    if (this.ptrs.size > 2) return;
+    const tool = (e.button === 1 || e.button === 2) ? "pan" : this.tool;
+    this.st = { kind: tool, last: null, sx: px, sy: py, lx: px, ly: py, moved: false };
+    const P = this.P, c = this.cellAt(px, py);
+    if (tool === "mark" || tool === "pen" || tool === "erase") {
+      if (!c) return;
+      const i = c[1] * P.w + c[0];
+      if (tool === "pen" && this.sel < 0) { toast("Önce Renkler listesinden bir renk seç."); this.st = null; return; }
+      if (tool === "mark") { if (P.cells[i] === 255) { this.st.target = null; } else this.st.target = P.done[i] ? 0 : 1; this.st.op = { t: "done", idx: [], prev: [] }; }
+      else this.st.op = { t: "cells", idx: [], pc: [], pd: [] };
+      this.st.last = c; this.paint(c);
+    } else if (tool === "fill") {
+      if (c) this.fillArea(c); this.st = null;
+    } else if (tool === "back") { this.st.a = this.pointAt(px, py); this.st.b = null; }
+  },
+  move(e) {
+    if (!this.P) return; const [px, py] = this.local(e);
+    if (!this.ptrs.has(e.pointerId)) { if (e.pointerType === "mouse") this.hoverAt(px, py); return; }
+    this.ptrs.set(e.pointerId, [px, py]);
+    if (this.ptrs.size >= 2 && this.g) { const [a, b] = [...this.ptrs.values()]; const d = Math.hypot(a[0] - b[0], a[1] - b[1]) || 1; const mid = [(a[0] + b[0]) / 2, (a[1] + b[1]) / 2]; const ns = clamp(this.g.s * d / this.g.d, 0.5, 90); this.V = { s: ns, x: mid[0] - this.g.wx * ns, y: mid[1] - this.g.wy * ns }; this.req(); return; }
+    const st = this.st; if (!st) return;
+    if (Math.hypot(px - st.sx, py - st.sy) > 4) st.moved = true;
+    if (st.kind === "pan") { this.V.x += px - st.lx; this.V.y += py - st.ly; st.lx = px; st.ly = py; this.req(); return; }
+    if (st.kind === "mark" || st.kind === "pen" || st.kind === "erase") {
+      const c = this.cellAt(px, py); if (!c || !st.last) { st.last = c; return; }
+      let [x0, y0] = st.last; const [x1, y1] = c; const dx = Math.abs(x1 - x0), dy = -Math.abs(y1 - y0), sx = x0 < x1 ? 1 : -1, sy = y0 < y1 ? 1 : -1; let err = dx + dy;
+      while (true) { this.paint([x0, y0]); if (x0 === x1 && y0 === y1) break; const e2 = 2 * err; if (e2 >= dy) { err += dy; x0 += sx; } if (e2 <= dx) { err += dx; y0 += sy; } }
+      st.last = c; this.hoverAt(px, py);
+    } else if (st.kind === "back") { st.b = this.pointAt(px, py); this.req(); }
+  },
+  up(e) {
+    if (!this.ptrs.has(e.pointerId)) return; const [px, py] = this.local(e); this.ptrs.delete(e.pointerId);
+    if (this.g) { if (this.ptrs.size < 2) { this.g = null; this.st = null; } return; }
+    const st = this.st; if (!st) return;
+    if (st.kind === "back") {
+      const b = this.pointAt(px, py), a = st.a;
+      if (a[0] === b[0] && a[1] === b[1]) this.removeBackNear(px, py);
+      else { if (this.sel < 0) toast("Önce kontur için bir renk seç."); else { this.pushUndo({ t: "extra", back: this.P.back.map(x => x.slice()), knots: this.P.knots.map(x => x.slice()) }); this.P.back.push([a[0], a[1], b[0], b[1], this.sel]); this.patternChanged(); } }
+      this.st = null; this.dirty(); return;
+    }
+    if (st.kind === "knot" && !st.moved) { this.toggleKnot(px, py); }
+    if (st.kind === "pick" && !st.moved) { const c = this.cellAt(px, py); if (c) { const v = this.P.cells[c[1] * this.P.w + c[0]]; if (v !== 255) { this.select(v); this.setTool("pen"); } } }
+    this.endStroke(false);
+  },
+  endStroke() {
+    const st = this.st; this.st = null; if (!st || !st.op || !st.op.idx.length) return;
+    this.pushUndo(st.op);
+    if (st.op.t === "done") this.progressChanged(); else { this.patternChanged(); this.progressChanged(); }
+    this.panelSoon();
+  },
+  paint(c) {
+    const st = this.st, P = this.P; const i = c[1] * P.w + c[0];
+    if (st.kind === "mark") {
+      if (st.target === null) { if (P.cells[i] === 255) return; st.target = P.done[i] ? 0 : 1; }
+      if (P.cells[i] === 255 || P.done[i] === st.target) return;
+      st.op.idx.push(i); st.op.prev.push(P.done[i]); P.done[i] = st.target;
+    } else {
+      const v = st.kind === "pen" ? this.sel : 255; if (P.cells[i] === v) return;
+      st.op.idx.push(i); st.op.pc.push(P.cells[i]); st.op.pd.push(P.done[i]); P.cells[i] = v; P.done[i] = 0;
+    }
+    this.dirty();
+  },
+  fillArea(c) {
+    const P = this.P, i0 = c[1] * P.w + c[0], col = P.cells[i0]; if (col === 255) return;
+    const target = P.done[i0] ? 0 : 1, seen = new Uint8Array(P.cells.length), st = [i0], op = { t: "done", idx: [], prev: [] };
+    while (st.length) { const i = st.pop(); if (seen[i] || P.cells[i] !== col) continue; seen[i] = 1;
+      if (P.done[i] !== target) { op.idx.push(i); op.prev.push(P.done[i]); P.done[i] = target; }
+      const x = i % P.w, y = (i / P.w) | 0; if (x > 0) st.push(i - 1); if (x < P.w - 1) st.push(i + 1); if (y > 0) st.push(i - P.w); if (y < P.h - 1) st.push(i + P.w); }
+    if (op.idx.length) { this.pushUndo(op); this.progressChanged(); this.dirty(); toast(`${fmt(op.idx.length)} kare ${target ? "işaretlendi" : "işareti kaldırıldı"}`, 1500); }
+  },
+  removeBackNear(px, py) {
+    const P = this.P, V = this.V, hs = V.s / 2; let best = -1, bd = Math.max(8, V.s * 0.45);
+    P.back.forEach((sg, k) => { const ax = V.x + sg[0] * hs, ay = V.y + sg[1] * hs, bx = V.x + sg[2] * hs, by = V.y + sg[3] * hs; const L = (bx - ax) ** 2 + (by - ay) ** 2; let t = L ? ((px - ax) * (bx - ax) + (py - ay) * (by - ay)) / L : 0; t = clamp(t, 0, 1); const d = Math.hypot(px - (ax + t * (bx - ax)), py - (ay + t * (by - ay))); if (d < bd) { bd = d; best = k; } });
+    if (best >= 0) { this.pushUndo({ t: "extra", back: P.back.map(x => x.slice()), knots: P.knots.map(x => x.slice()) }); P.back.splice(best, 1); this.patternChanged(); this.dirty(); }
+  },
+  toggleKnot(px, py) {
+    const P = this.P, p = this.pointAt(px, py); const k = P.knots.findIndex(q => q[0] === p[0] && q[1] === p[1]);
+    if (k < 0 && this.sel < 0) { toast("Önce düğüm için bir renk seç."); return; }
+    this.pushUndo({ t: "extra", back: P.back.map(x => x.slice()), knots: P.knots.map(x => x.slice()) });
+    if (k >= 0) P.knots.splice(k, 1); else P.knots.push([p[0], p[1], this.sel]);
+    this.patternChanged(); this.dirty();
+  },
+  hoverAt(px, py) {
+    const c = this.cellAt(px, py); const P = this.P;
+    const prev = this.hover; this.hover = c; if (String(prev) !== String(c)) this.req();
+    if (!c) { $("#hud").textContent = this.hint(); return; }
+    const v = P.cells[c[1] * P.w + c[0]];
+    $("#hud").textContent = `Sütun ${c[0] + 1}, satır ${c[1] + 1}` + (v !== 255 ? ` · DMC ${palLabel(P.palette[v])}${P.done[c[1] * P.w + c[0]] ? " · işlendi" : ""}` : " · boş");
+  },
+  hint() { return { pan: "Sürükleyerek gezin; iki parmakla yakınlaştır", mark: "Dokun ya da sürükle: işlendi olarak işaretle", fill: "Dokun: aynı renkli bitişik alanı işaretle", pen: "Seçili renkle boya", erase: "İlmeği kaldır", back: "Köşeden köşeye sürükle; çizgiye dokunarak sil", knot: "Köşe noktasına dokun; tekrar dokununca kalkar", pick: "Şemadan renk seç" }[this.tool] || ""; },
+
+  /* ---------- geri al ---------- */
+  pushUndo(op) { this.undoStack.push(op); if (this.undoStack.length > 60) this.undoStack.shift(); $("#undoBtn").disabled = false; },
+  undo() {
+    const op = this.undoStack.pop(); const P = this.P; if (!op || !P) return;
+    if (op.t === "done") { for (let k = op.idx.length - 1; k >= 0; k--) P.done[op.idx[k]] = op.prev[k]; this.progressChanged(); }
+    else if (op.t === "cells") { for (let k = op.idx.length - 1; k >= 0; k--) { P.cells[op.idx[k]] = op.pc[k]; P.done[op.idx[k]] = op.pd[k]; } this.patternChanged(); }
+    else if (op.t === "extra") { P.back = op.back; P.knots = op.knots; this.patternChanged(); }
+    else if (op.t === "pal") { P.palette = op.palette; P.cells = op.cells; P.done = op.done; P.back = op.back; P.knots = op.knots; this.sel = -1; this.recolor(); this.patternChanged(); }
+    $("#undoBtn").disabled = !this.undoStack.length; this.dirty(); this.renderPanels();
+  },
+  snapPal() { const P = this.P; return { t: "pal", palette: P.palette.map(p => Object.assign({}, p)), cells: P.cells.slice(), done: P.done.slice(), back: P.back.map(x => x.slice()), knots: P.knots.map(x => x.slice()) }; },
+
+  /* ---------- araç ve mod ---------- */
+  setTool(t) { this.tool = t; $$("#trackTools button, #editTools button").forEach(b => b.classList.toggle("on", b.dataset.t === t)); $("#cv").style.cursor = t === "pan" ? "grab" : "crosshair"; $("#hud").textContent = this.hint(); },
+  setEdit(on) { this.edit = on; $("#editTools").classList.toggle("hidden", !on); $("#trackTools").classList.toggle("hidden", on); $("#palEdit").classList.toggle("hidden", !on); $("#editToggle").textContent = on ? "Takibe dön" : "Düzenle"; $("#editToggle").classList.toggle("primary", on); this.setTool(on ? "pen" : "mark"); this.renderLegend(); },
+  select(i) { this.sel = i; this.bmpDirty = true; this.req(); this.renderLegend(); $("#chgColor").disabled = i < 0; $("#mergeColor").disabled = i < 0; },
+  tab: "colors",
+  setTab(t) { this.tab = t; $$(".tabs button").forEach(b => b.classList.toggle("on", b.dataset.tab === t)); $("#tabColors").classList.toggle("hidden", t !== "colors"); $("#tabProg").classList.toggle("hidden", t !== "prog"); $("#tabInfo").classList.toggle("hidden", t !== "info"); this.renderPanels(); },
+
+  /* ---------- paneller ---------- */
+  panelSoon() { clearTimeout(this.panelT); this.panelT = setTimeout(() => this.renderPanels(true), 220); },
+  calcCounts() {
+    const P = this.P, n = P.palette.length, t = new Array(n).fill(0), d = new Array(n).fill(0);
+    for (let i = 0; i < P.cells.length; i++) { const c = P.cells[i]; if (c === 255) continue; t[c]++; if (P.done[i]) d[c]++; }
+    const bs = new Array(n).fill(0), kn = new Array(n).fill(0); P.back.forEach(s => bs[s[4]]++); P.knots.forEach(k => kn[k[2]]++);
+    this.counts = { t, d, bs, kn };
+  },
+  renderPanels(light) {
+    if (!this.P) return; this.calcCounts();
+    $("#wTitle").textContent = this.P.name;
+    this.renderLegend();
+    if (this.tab === "prog") this.renderProg();
+    if (this.tab === "info" && !light) this.renderInfo();
+  },
+  renderLegend() {
+    const P = this.P; if (!P || !this.counts) return; const { t, d, bs, kn } = this.counts; const m = P.ratio === 4 ? 4 : 1;
+    $("#legend").innerHTML = P.palette.map((p, i) => {
+      const v = this.cols[i]; const pct = t[i] ? d[i] / t[i] * 100 : 0;
+      const sw = p.code2 ? `background:linear-gradient(135deg,${p.hexA} 50%,${p.hexB} 50%)` : `background:${p.hex}`;
+      const tags = (p.type === "h" && t[i] ? `<span class="tag">yarım</span>` : "") + (bs[i] ? `<span class="tag">BS</span>` : "") + (kn[i] ? `<span class="tag">düğüm</span>` : "");
+      return `<button class="lg ${i === this.sel ? "sel" : ""}" data-i="${i}" aria-pressed="${i === this.sel}">
+        <span class="sw" style="${sw};color:${v.inkBase}">${t[i] ? esc(p.sym) : ""}</span>
+        <span class="nm"><b>DMC ${esc(palLabel(p))}${tags}</b><span>${esc(palName(p))}${p.code2 ? " (1+1 tel)" : ""}</span></span>
+        <span class="ct">${t[i] ? `${fmt(d[i] * m)} / ${fmt(t[i] * m)}<div class="bar"><i style="width:${pct}%"></i></div>` : (bs[i] || kn[i] ? "yardımcı" : "kullanılmıyor")}</span></button>`;
+    }).join("");
+  },
+  renderProg() {
+    const P = this.P, { t, d } = this.counts, m = P.ratio === 4 ? 4 : 1;
+    const T = t.reduce((a, b) => a + b, 0) * m, D = d.reduce((a, b) => a + b, 0) * m, pct = T ? D / T * 100 : 0;
+    const order = P.palette.map((p, i) => i).filter(i => t[i]).sort((a, b) => (t[b] - d[b]) - (t[a] - d[a]));
+    $("#tabProg").innerHTML = `
+      <div class="section"><div class="big-pct">%${fmt1(pct)}</div><div class="bar" style="height:10px;margin:12px 0"><i style="width:${pct}%"></i></div>
+      <dl class="kv"><dt>İşlenen haç</dt><dd>${fmt(D)}</dd><dt>Kalan</dt><dd>${fmt(T - D)}</dd><dt>Toplam</dt><dd>${fmt(T)}</dd><dt>Backstitch</dt><dd>${fmt(P.back.length)} çizgi</dd><dt>Fransız düğümü</dt><dd>${fmt(P.knots.length)}</dd>
+      ${P.lastWorked ? `<dt>Son çalışma</dt><dd>${new Date(P.lastWorked).toLocaleString("tr-TR", { day: "numeric", month: "long", hour: "2-digit", minute: "2-digit" })}</dd>` : ""}</dl></div>
+      <div class="section"><h3>Kalan iş, renge göre</h3><div class="stack">${order.map(i => { const p = P.palette[i]; const q = d[i] / t[i] * 100; return `<div><div class="row small"><span><b>${esc(palLabel(p))}</b> <span class="muted">${esc(p.name)}</span></span><span class="nogrow muted">${fmt((t[i] - d[i]) * m)} kaldı</span></div><div class="bar" style="margin-top:4px"><i style="width:${q}%;background:${p.hex}"></i></div></div>`; }).join("")}</div></div>
+      <div class="section stack">
+        <button class="btn" id="doneSel" ${this.sel < 0 ? "disabled" : ""}>Seçili rengi tamamlandı say</button>
+        <button class="btn danger" id="resetProg">İlerlemeyi sıfırla</button>
+      </div>`;
+    $("#doneSel").onclick = () => { const op = { t: "done", idx: [], prev: [] }; for (let i = 0; i < P.cells.length; i++) if (P.cells[i] === this.sel && !P.done[i]) { op.idx.push(i); op.prev.push(0); P.done[i] = 1; } if (op.idx.length) { this.pushUndo(op); this.progressChanged(); this.dirty(); this.renderPanels(); } };
+    $("#resetProg").onclick = async () => { if (!await confirmBox("İlerleme sıfırlansın mı?", "Tüm işaretler kaldırılır. Geri al ile bu oturumda geri getirebilirsin.", "Sıfırla")) return; const op = { t: "done", idx: [], prev: [] }; for (let i = 0; i < P.done.length; i++) if (P.done[i]) { op.idx.push(i); op.prev.push(1); P.done[i] = 0; } this.pushUndo(op); this.progressChanged(); this.dirty(); this.renderPanels(); };
+  },
+  renderInfo() {
+    const P = this.P, f = P.fabric, per = spi(f), m = P.ratio === 4 ? 2 : 1;
+    const wcm = P.w * m / per * 2.54, hcm = P.h * m / per * 2.54, mg = P.margin || 5;
+    const fl = (FABRICS.find(x => x.id === f.id) || {}).label || `${f.count} ct${f.over2 ? " (2 iplik üzeri)" : ""}`;
+    const use = threadUsage(P);
+    const syncTxt = Store.provider === "google" ? `Çalışmaların ${esc(Store.user && Store.user.email || "Google hesabına")} hesabına kayıtlı. Aynı hesapla giriş yaptığın telefon, tablet ve bilgisayarda ilerleme otomatik eşitlenir.` : Store.provider === "claude" ? "Çalışmaların hesabına bağlı olarak saklanır; bu sayfayı başka cihazda açtığında ilerleme eşitlenir." : Store.fb ? "Şu an giriş yapılmadı; veriler yalnız bu tarayıcıda. Sağ üstten Google ile giriş yaparsan çalışmalar hesabına taşınır ve cihazlar arasında eşitlenir." : "Google senkronu ayarlanmamış; veriler yalnız bu tarayıcıda tutuluyor. Dosyanın başındaki FIREBASE_CONFIG alanı doldurulunca Google ile giriş açılır.";
+    $("#tabInfo").innerHTML = `
+      <div class="section"><div class="field"><label for="nmIn">Ad</label><input type="text" id="nmIn" maxlength="60" value="${esc(P.name)}"></div>
+      <dl class="kv"><dt>Kumaş</dt><dd>${esc(fl)}</dd><dt>Kumaş rengi</dt><dd><span style="display:inline-block;width:14px;height:14px;border-radius:3px;vertical-align:-2px;border:1px solid var(--line);background:${esc(f.color)}"></span></dd>
+      <dt>Ölçek</dt><dd>${P.ratio === 4 ? "1:4 (1 simge = 4 haç)" : "1:1"}</dd><dt>Şema</dt><dd>${P.w} × ${P.h} kare</dd><dt>İlmek</dt><dd>${P.w * m} × ${P.h * m}</dd>
+      <dt>Bitmiş boyut</dt><dd>${fmt1(wcm)} × ${fmt1(hcm)} cm</dd><dt>Kesilecek kumaş</dt><dd>${fmt1(wcm + 2 * mg)} × ${fmt1(hcm + 2 * mg)} cm</dd>
+      <dt>Tel sayısı</dt><dd>Haç ${strandsFor(f)} tel, kontur 1 tel</dd></dl>
+      <button class="btn" id="revise" style="width:100%;margin-top:12px">Ölçü ve ayarları revize et</button></div>
+      <div class="section"><h3>Malzeme listesi</h3><table class="mat"><tr><th>DMC</th><th>Renk</th><th class="r">Çile</th></tr>${use.map(u => `<tr><td><span style="display:inline-block;width:12px;height:12px;border-radius:2px;background:${u.hex};vertical-align:-1px;border:1px solid rgba(0,0,0,.2)"></span> ${esc(u.code)}</td><td>${esc(u.name)}</td><td class="r">${u.skeins < 1 ? "< 1" : fmt1(u.skeins)}</td></tr>`).join("")}</table>
+      <p class="small muted">Tahminidir; %15 fire payı dahildir. Bir çile 8 m, 6 tel.</p></div>
+      <div class="section stack"><h3>Dışa aktar</h3><button class="btn primary" id="exPdf">Yazdırılabilir PDF indir</button><button class="btn" id="exChart">Şemayı PNG olarak indir</button><button class="btn" id="exKey">Renk anahtarını PNG olarak indir</button><button class="btn" id="exCsv">Malzeme listesini CSV olarak indir</button></div>
+      <div class="section"><h3>Cihazlar arası takip</h3><p class="small muted" style="margin:0">${syncTxt}</p></div>
+      <div class="section"><button class="btn danger" id="delPrj" style="width:100%">Çalışmayı sil</button></div>`;
+    let nt = 0; $("#nmIn").oninput = e => { P.name = e.target.value.trim().slice(0, 60) || "Adsız çalışma"; $("#wTitle").textContent = P.name; clearTimeout(nt); nt = setTimeout(() => { P.updatedAt = Date.now(); Store.update("prj_" + P.id, { name: P.name, updatedAt: P.updatedAt, by: DEVICE }).catch(writeErr); }, 800); };
+    $("#revise").onclick = () => { this.flush(); openNew({ id: P.id, name: P.name, settings: P.settings }); };
+    $("#exPdf").onclick = () => exportPdf(P); $("#exChart").onclick = () => exportChart(P); $("#exKey").onclick = () => exportKey(P); $("#exCsv").onclick = () => exportCsv(P);
+    $("#delPrj").onclick = async () => { if (!await confirmBox("Çalışma silinsin mi?", `“${esc(P.name)}” şeması ve tüm ilerlemesi kalıcı olarak silinir.`, "Sil", true)) return; const id = P.id; this.close(); show("list"); try { await Promise.all([Store.del("prj_" + id), Store.del("pat_" + id), Store.del("img_" + id)]); toast("Çalışma silindi."); } catch (e) { writeErr(e); } };
+  },
+
+  /* ---------- palet düzenleme ---------- */
+  async addColor() {
+    const r = await threadPicker({ title: "Renk ekle" }); if (!r) return; const P = this.P;
+    this.pushUndo(this.snapPal());
+    const e = makePalEntry(r.code, r.code2, r.type); const used = new Set(P.palette.map(p => p.sym)); e.sym = SYMBOLS.find(s => !used.has(s)) || "?";
+    P.palette.push(e); this.recolor(); this.select(P.palette.length - 1); this.patternChanged(); this.renderPanels();
+  },
+  async changeColor() {
+    const P = this.P, i = this.sel; if (i < 0) return; const r = await threadPicker({ title: "Rengi değiştir", entry: P.palette[i] }); if (!r) return;
+    this.pushUndo(this.snapPal());
+    const e = makePalEntry(r.code, r.code2, r.type); e.sym = P.palette[i].sym; P.palette[i] = e; this.recolor(); this.patternChanged(); this.renderPanels();
+  },
+  async mergeColor() {
+    const P = this.P, i = this.sel; if (i < 0) return;
+    const opts = P.palette.map((p, k) => k === i ? "" : `<option value="${k}">${esc(p.sym)}  DMC ${esc(palLabel(p))} — ${esc(palName(p))}</option>`).join("");
+    const r = await modal({ title: "Rengi birleştir", body: `<p class="small" style="margin-top:0">DMC ${esc(palLabel(P.palette[i]))} kullanılan tüm ilmekler seçtiğin renge geçer ve bu renk listeden kalkar.</p><select id="mgT">${opts}</select>`, actions: [{ label: "Vazgeç", value: null }, { label: "Birleştir", cls: "primary", get: m => +m.querySelector("#mgT").value }] });
+    if (r === null || r === undefined || isNaN(r)) return;
+    this.pushUndo(this.snapPal());
+    const tgt = r > i ? r - 1 : r;
+    for (let k = 0; k < P.cells.length; k++) { const c = P.cells[k]; if (c === 255) continue; if (c === i) P.cells[k] = tgt; else if (c > i) P.cells[k] = c - 1; }
+    const fix = c => c === i ? tgt : c > i ? c - 1 : c;
+    P.back.forEach(s => s[4] = fix(s[4])); P.knots.forEach(k => k[2] = fix(k[2]));
+    P.palette.splice(i, 1); this.recolor(); this.select(tgt); this.patternChanged(); this.renderPanels();
+  }
+};
+
+/* ---------- dışa aktarma ---------- */
+let DL = null;
+async function saveFile(filename, data) {
+  try { if (DL === null && window.claude && window.claude.use) DL = await window.claude.use("downloads"); } catch (e) { DL = null; }
+  if (DL) { try { await DL.save({ filename, data }); return; } catch (e) { if (e && e.code === "declined") return; if (e && e.code === "rate_limited") { toast("Bir indirme penceresi zaten açık."); return; } } }
+  try { const url = URL.createObjectURL(data instanceof Blob ? data : new Blob([data])); const a = document.createElement("a"); a.href = url; a.download = filename; document.body.appendChild(a); a.click(); a.remove(); setTimeout(() => URL.revokeObjectURL(url), 4000); }
+  catch (e) { toast("Bu görünümde dosya indirilemiyor."); }
+}
+const canvasBlob = c => new Promise(r => c.toBlob(r, "image/png"));
+const safeName = s => (s || "sema").replace(/[^\p{L}\p{N}\- ]+/gu, "").trim().replace(/\s+/g, "-").slice(0, 40) || "sema";
+async function exportChart(P) {
+  toast("Şema hazırlanıyor…", 1500);
+  const cell = clamp(Math.floor(9000 / Math.max(P.w, P.h)), 8, 22), M = 44;
+  const inner = renderWhole(P, "sym", cell, true);
+  const c = document.createElement("canvas"); c.width = inner.width + M * 2; c.height = inner.height + M * 2;
+  const x = c.getContext("2d"); x.fillStyle = "#fff"; x.fillRect(0, 0, c.width, c.height); x.drawImage(inner, M, M);
+  x.fillStyle = "#333"; x.font = "500 13px 'IBM Plex Sans',sans-serif"; x.textAlign = "center"; x.textBaseline = "middle";
+  for (let i = 0; i <= P.w; i += 10) { x.fillText(String(i), M + i * cell, M / 2); x.fillText(String(i), M + i * cell, c.height - M / 2); }
+  for (let i = 0; i <= P.h; i += 10) { x.fillText(String(i), M / 2, M + i * cell); x.fillText(String(i), c.width - M / 2, M + i * cell); }
+  x.fillStyle = "#A3243A"; const cx = M + P.w / 2 * cell, cy = M + P.h / 2 * cell;
+  x.beginPath(); x.moveTo(cx - 8, M - 14); x.lineTo(cx + 8, M - 14); x.lineTo(cx, M - 3); x.fill();
+  x.beginPath(); x.moveTo(M - 14, cy - 8); x.lineTo(M - 14, cy + 8); x.lineTo(M - 3, cy); x.fill();
+  saveFile(safeName(P.name) + "-sema.png", await canvasBlob(c));
+}
+async function exportKey(P) {
+  const counts = new Array(P.palette.length).fill(0); for (const v of P.cells) if (v !== 255) counts[v]++;
+  const use = threadUsage(P); const sk = Object.fromEntries(use.map(u => [u.code, u.skeins])); const m = P.ratio === 4 ? 4 : 1;
+  const rowH = 40, W = 900, top = 120, c = document.createElement("canvas"); c.width = W; c.height = top + P.palette.length * rowH + 40;
+  const x = c.getContext("2d"); x.fillStyle = "#fff"; x.fillRect(0, 0, W, c.height);
+  x.fillStyle = "#1A2136"; x.font = "700 26px 'Bricolage Grotesque','IBM Plex Sans',sans-serif"; x.fillText(P.name, 30, 46);
+  const f = P.fabric, per = spi(f), mm = P.ratio === 4 ? 2 : 1;
+  x.font = "400 15px 'IBM Plex Sans',sans-serif"; x.fillStyle = "#555";
+  x.fillText(`${(FABRICS.find(q => q.id === f.id) || {}).label || f.count + " ct"} · ${P.w * mm} × ${P.h * mm} ilmek · ${fmt1(P.w * mm / per * 2.54)} × ${fmt1(P.h * mm / per * 2.54)} cm · ${P.ratio === 4 ? "1:4" : "1:1"} · haç ${strandsFor(f)} tel`, 30, 76);
+  x.font = "600 13px 'IBM Plex Sans',sans-serif"; x.fillStyle = "#777"; [["Simge", 30], ["DMC", 100], ["Renk", 250], ["İlmek", 640], ["Tür", 740]].forEach(([t, px]) => x.fillText(t, px, top - 14));
+  const cols = palColors(P, [255, 255, 255]);
+  P.palette.forEach((p, i) => {
+    const y = top + i * rowH;
+    if (p.code2) { x.fillStyle = p.hexA; x.fillRect(30, y + 4, 16, 32); x.fillStyle = p.hexB; x.fillRect(46, y + 4, 16, 32); } else { x.fillStyle = p.hex; x.fillRect(30, y + 4, 32, 32); }
+    x.strokeStyle = "rgba(0,0,0,.25)"; x.strokeRect(30.5, y + 4.5, 32, 32);
+    x.fillStyle = cols[i].inkBase; x.font = "600 20px 'IBM Plex Sans','DejaVu Sans',sans-serif"; x.textAlign = "center"; x.fillText(p.sym, 46, y + 27); x.textAlign = "left";
+    x.fillStyle = "#1A2136"; x.font = "600 15px 'IBM Plex Sans',sans-serif"; x.fillText(palLabel(p), 100, y + 26);
+    x.font = "400 15px 'IBM Plex Sans',sans-serif"; x.fillText(palName(p).slice(0, 48), 250, y + 26);
+    x.fillText(counts[i] ? fmt(counts[i] * m) : "—", 640, y + 26);
+    x.fillText(p.type === "h" ? "Yarım" : p.code2 ? "Tam, 1+1" : counts[i] ? "Tam" : "Kontur/düğüm", 740, y + 26);
+    x.fillStyle = "#e3e3e3"; x.fillRect(30, y + rowH - 1, W - 60, 1);
+  });
+  saveFile(safeName(P.name) + "-renk-anahtari.png", await canvasBlob(c));
+}
+function exportCsv(P) {
+  const counts = new Array(P.palette.length).fill(0); for (const v of P.cells) if (v !== 255) counts[v]++; const m = P.ratio === 4 ? 4 : 1;
+  const use = threadUsage(P);
+  let s = "\uFEFFSimge;DMC;Renk;İlmek türü;İlmek sayısı\n" + P.palette.map((p, i) => [p.sym, palLabel(p), palName(p), p.type === "h" ? "Yarım" : "Tam", counts[i] * m].join(";")).join("\n");
+  s += "\n\nDMC;Renk;Tahmini çile\n" + use.map(u => [u.code, u.name, fmt1(u.skeins)].join(";")).join("\n");
+  saveFile(safeName(P.name) + "-malzeme.csv", new Blob([s], { type: "text/csv" }));
+}
+
+/* ---------- olaylar ---------- */
+function bindWork() {
+  const cv = $("#cv");
+  cv.addEventListener("pointerdown", e => Work.down(e));
+  cv.addEventListener("pointermove", e => Work.move(e));
+  cv.addEventListener("pointerup", e => Work.up(e));
+  cv.addEventListener("pointercancel", e => { Work.ptrs.delete(e.pointerId); Work.g = null; Work.endStroke(); });
+  cv.addEventListener("pointerleave", e => { if (e.pointerType === "mouse" && !Work.ptrs.size) { Work.hover = null; Work.req(); } });
+  cv.addEventListener("contextmenu", e => e.preventDefault());
+  cv.addEventListener("wheel", e => { e.preventDefault(); const [px, py] = Work.local(e); if (e.ctrlKey || Math.abs(e.deltaY) >= Math.abs(e.deltaX)) Work.zoomAt(Math.exp(-e.deltaY * (e.ctrlKey ? 0.012 : 0.0022)), px, py); else { Work.V.x -= e.deltaX; Work.req(); } }, { passive: false });
+  new ResizeObserver(() => { if (Work.P) Work.resize(false); }).observe($("#cWrap"));
+  $("#zIn").onclick = () => Work.zoomAt(1.4, Work.W / 2, Work.H / 2);
+  $("#zOut").onclick = () => Work.zoomAt(1 / 1.4, Work.W / 2, Work.H / 2);
+  $("#zFit").onclick = () => Work.fit();
+  $$("#trackTools button, #editTools button").forEach(b => b.onclick = () => Work.setTool(b.dataset.t));
+  $("#editToggle").onclick = () => Work.setEdit(!Work.edit);
+  $("#undoBtn").onclick = () => Work.undo();
+  $("#viewMode").onchange = e => { Work.mode = e.target.value; Work.dirty(); };
+  $$(".tabs button").forEach(b => b.onclick = () => Work.setTab(b.dataset.tab));
+  $("#legend").addEventListener("click", e => { const b = e.target.closest(".lg"); if (!b) return; const i = +b.dataset.i; Work.select(Work.sel === i ? -1 : i); if (Work.tab === "prog") Work.renderProg(); });
+  $("#hiOnly").onchange = e => { Work.hiOnly = e.target.checked; Work.dirty(); };
+  $("#addColor").onclick = () => Work.addColor(); $("#chgColor").onclick = () => Work.changeColor(); $("#mergeColor").onclick = () => Work.mergeColor();
+  document.addEventListener("keydown", e => {
+    if (App.view !== "work" || e.target.closest("input,select,textarea") || $("#modalRoot").children.length) return;
+    if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === "z") { e.preventDefault(); Work.undo(); }
+    else if (e.key === "+" || e.key === "=") Work.zoomAt(1.3, Work.W / 2, Work.H / 2);
+    else if (e.key === "-") Work.zoomAt(1 / 1.3, Work.W / 2, Work.H / 2);
+    else if (e.key === "0") Work.fit();
+  });
+  document.addEventListener("visibilitychange", () => { if (document.visibilityState === "hidden") Work.flush(); });
+  window.addEventListener("pagehide", () => Work.flush());
+  matchMedia("(prefers-color-scheme: dark)").addEventListener("change", () => { if (Work.P) Work.recolor(); });
+}
+
+
+/* ============ tam ekran ============ */
+const ICON_FS_IN = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/></svg>`;
+const ICON_FS_OUT = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M9 4v5H4M15 4v5h5M9 20v-5H4M15 20v-5h5"/></svg>`;
+const FS = {
+  on: false,
+  async toggle(force) {
+    const on = force === undefined ? !this.on : !!force; if (on === this.on) return; this.on = on;
+    document.body.classList.toggle("fs", on); document.body.classList.remove("legend-open");
+    const b = $("#fsBtn"); b.innerHTML = on ? ICON_FS_OUT : ICON_FS_IN; b.title = on ? "Tam ekrandan çık" : "Tam ekran"; b.setAttribute("aria-label", b.title);
+    const el = document.documentElement;
+    try {
+      if (on) { if (el.requestFullscreen && !document.fullscreenElement) await el.requestFullscreen({ navigationUI: "hide" }); else if (el.webkitRequestFullscreen) el.webkitRequestFullscreen(); }
+      else { if (document.fullscreenElement && document.exitFullscreen) await document.exitFullscreen(); else if (document.webkitFullscreenElement && document.webkitExitFullscreen) document.webkitExitFullscreen(); }
+    } catch (e) { /* iPhone gibi desteklemeyen tarayıcılarda sayfa içi tam ekran kullanılır */ }
+    setTimeout(() => { Work.resize(true); }, 80);
+  }
+};
+document.addEventListener("fullscreenchange", () => { if (!document.fullscreenElement && FS.on) FS.toggle(false); });
+document.addEventListener("webkitfullscreenchange", () => { if (!document.webkitFullscreenElement && FS.on) FS.toggle(false); });
+$("#fsBtn").onclick = () => FS.toggle();
+$("#legendBtn").onclick = () => document.body.classList.toggle("legend-open");
+$("#cv").addEventListener("pointerdown", () => { if (FS.on) document.body.classList.remove("legend-open"); }, true);
+document.addEventListener("keydown", e => { if (e.key === "Escape" && FS.on && !$("#modalRoot").children.length) { if (document.body.classList.contains("legend-open")) document.body.classList.remove("legend-open"); else FS.toggle(false); } });
+
+/* ============ PDF ============ */
+const PAPERS = { a4: { w: 210, h: 297, label: "A4" }, letter: { w: 215.9, h: 279.4, label: "Letter" }, a3: { w: 297, h: 420, label: "A3" } };
+function pdfLayout(P, o) {
+  const pp = PAPERS[o.paper], M = 10, HEAD = 14, RUL = 7, FOOT = 10;
+  const gw = pp.w - 2 * M - RUL, gh = pp.h - M - HEAD - RUL - FOOT - M;
+  let cols = Math.floor(gw / o.cell), rows = Math.floor(gh / o.cell);
+  if (cols >= 20) cols -= cols % 10; if (rows >= 20) rows -= rows % 10;
+  // küçük şemalarda gereksiz sayfa bölme yapma
+  const nx = Math.ceil(P.w / cols), ny = Math.ceil(P.h / rows);
+  const pages = []; for (let py = 0; py < ny; py++) for (let px = 0; px < nx; px++) pages.push({ x0: px * cols, y0: py * rows, x1: Math.min(P.w, (px + 1) * cols), y1: Math.min(P.h, (py + 1) * rows), px, py });
+  return { pp, M, HEAD, RUL, FOOT, cols, rows, nx, ny, pages, gx: M + RUL, gy: M + HEAD + RUL };
+}
+async function exportPdf(P) {
+  const body = document.createElement("div");
+  body.innerHTML = `
+    <div class="field"><label>Kâğıt</label><div class="seg" data-k="paper"><button data-v="a4" class="on">A4</button><button data-v="letter">Letter</button><button data-v="a3">A3</button></div></div>
+    <div class="field"><label>Kare boyutu</label><div class="seg" data-k="cell"><button data-v="2.5">Küçük 2,5 mm</button><button data-v="3" class="on">Normal 3 mm</button><button data-v="3.8">Büyük 3,8 mm</button></div>
+      <span class="hint">Büyük kareler daha rahat okunur ama sayfa sayısı artar.</span></div>
+    <div class="field"><label>Baskı</label><div class="seg" data-k="color"><button data-v="1" class="on">Renkli simge</button><button data-v="0">Siyah-beyaz simge</button></div></div>
+    <p class="small muted" id="pdfInfo" style="margin:4px 0 0"></p>`;
+  const st = { paper: "a4", cell: 3, color: true };
+  const info = () => { const L = pdfLayout(P, st); body.querySelector("#pdfInfo").textContent = `Şema ${L.pages.length} sayfaya bölünecek (${L.nx} × ${L.ny}); her sayfada en fazla ${L.cols} × ${L.rows} kare. Ayrıca kapak, sayfa düzeni ve renk anahtarı eklenir. Yazdırırken ölçeği “%100 / Gerçek boyut” seç.`; };
+  body.addEventListener("click", e => { const b = e.target.closest(".seg button"); if (!b) return; const seg = b.parentElement, k = seg.dataset.k; $$("button", seg).forEach(x => x.classList.toggle("on", x === b)); st[k] = k === "paper" ? b.dataset.v : k === "cell" ? +b.dataset.v : b.dataset.v === "1"; info(); });
+  info();
+  const go = await modal({ title: "PDF olarak indir", body, actions: [{ label: "Vazgeç", value: false }, { label: "PDF oluştur", value: true, cls: "primary" }] });
+  if (!go) return;
+
+  const prog = document.createElement("div"); prog.className = "toast"; prog.style.minWidth = "260px";
+  prog.innerHTML = `<div id="pdfTxt">PDF hazırlanıyor…</div><div class="pdf-prog"><i id="pdfBar"></i></div>`; document.body.appendChild(prog);
+  const step = (t, f) => { prog.querySelector("#pdfTxt").textContent = t; prog.querySelector("#pdfBar").style.width = Math.round(f * 100) + "%"; return new Promise(r => setTimeout(r, 0)); };
+  try {
+    if (!window.jspdf) await loadScript("https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js");
+    const { jsPDF } = window.jspdf;
+    const L = pdfLayout(P, st), pp = L.pp, K = 7; // mm başına piksel (~178 dpi)
+    const doc = new jsPDF({ unit: "mm", format: st.paper === "letter" ? "letter" : st.paper, orientation: "portrait", compress: true });
+    const cols = palColors(P, [255, 255, 255]);
+    const legendPages = pdfLegendPages(P, L);
+    const total = 2 + legendPages + L.pages.length; let pageNo = 0;
+    const newCanvas = () => { const c = document.createElement("canvas"); c.width = Math.round(pp.w * K); c.height = Math.round(pp.h * K); const x = c.getContext("2d"); x.fillStyle = "#fff"; x.fillRect(0, 0, c.width, c.height); x.scale(K, K); return [c, x]; };
+    const addPage = (c, fmt) => { if (pageNo > 0) doc.addPage(); doc.addImage(c.toDataURL(fmt === "jpg" ? "image/jpeg" : "image/png", 0.92), fmt === "jpg" ? "JPEG" : "PNG", 0, 0, pp.w, pp.h, undefined, "FAST"); pageNo++; };
+    const footer = (x, n) => { x.fillStyle = "#777"; x.font = `400 2.6px "IBM Plex Sans",sans-serif`; x.textAlign = "left"; x.textBaseline = "alphabetic"; x.fillText(P.name, L.M, pp.h - L.M + 2); x.textAlign = "right"; x.fillText(`Sayfa ${n} / ${total}`, pp.w - L.M, pp.h - L.M + 2); x.textAlign = "left"; };
+
+    await step("Kapak hazırlanıyor…", 0.02);
+    { const [c, x] = newCanvas(); pdfCover(x, P, L, cols); footer(x, 1); addPage(c, "jpg"); }
+    await step("Sayfa düzeni…", 0.05);
+    { const [c, x] = newCanvas(); pdfMap(x, P, L, cols, st); footer(x, 2); addPage(c, "png"); }
+    for (let i = 0; i < legendPages; i++) { await step("Renk anahtarı…", 0.08); const [c, x] = newCanvas(); pdfLegend(x, P, L, cols, i, legendPages, st); footer(x, pageNo + 1); addPage(c, "png"); }
+    for (let i = 0; i < L.pages.length; i++) {
+      await step(`Şema sayfası ${i + 1} / ${L.pages.length}`, 0.1 + 0.85 * i / L.pages.length);
+      const [c, x] = newCanvas(); pdfChartPage(x, P, L, cols, st, i); footer(x, pageNo + 1); addPage(c, "png");
+    }
+    await step("Dosya kaydediliyor…", 0.98);
+    const blob = doc.output("blob");
+    prog.remove();
+    await saveFile(safeName(P.name) + "-sema.pdf", blob);
+  } catch (e) { console.warn(e); prog.remove(); toast("PDF oluşturulamadı. İnternet bağlantını kontrol edip tekrar dene.", 5000); }
+}
+
+function txt(x, s, px, py, size, weight = 400, color = "#1A2136", align = "left", fam = "IBM Plex Sans") { x.fillStyle = color; x.font = `${weight} ${size}px "${fam}","IBM Plex Sans",sans-serif`; x.textAlign = align; x.textBaseline = "alphabetic"; x.fillText(s, px, py); }
+function pdfFacts(P) {
+  const f = P.fabric, per = spi(f), m = P.ratio === 4 ? 2 : 1, mg = P.margin || 5;
+  const wcm = P.w * m / per * 2.54, hcm = P.h * m / per * 2.54;
+  const fl = (FABRICS.find(q => q.id === f.id) || {}).label || `${f.count} ct${f.over2 ? " (2 iplik üzeri)" : ""}`;
+  const fc = (FAB_COLORS.find(c => c[1].toLowerCase() === (f.color || "").toLowerCase()) || [f.color])[0];
+  let total = 0; for (const c of P.cells) if (c !== 255) total++;
+  return [["Kumaş", `${fl}, ${fc}`], ["Ölçek", P.ratio === 4 ? "1:4 — 1 simge = 2×2 = 4 haç" : "1:1 — 1 simge = 1 haç"], ["Şema", `${P.w} × ${P.h} kare`], ["İlmek ölçüsü", `${P.w * m} × ${P.h * m} haç`],
+    ["Bitmiş boyut", `${fmt1(wcm)} × ${fmt1(hcm)} cm`], ["Kesilecek kumaş", `${fmt1(wcm + 2 * mg)} × ${fmt1(hcm + 2 * mg)} cm (her yönden ${mg} cm pay)`], ["Renk", `${P.palette.filter((p, i) => true).length} (DMC)`],
+    ["Toplam haç", fmt(total * m * m)], ["Tel sayısı", `Haç ${strandsFor(f)} tel, karışımlarda 1+1 tel, backstitch 1 tel`]];
+}
+function pdfCover(x, P, L, cols) {
+  const pp = L.pp, M = L.M;
+  txt(x, P.name, M, M + 12, 9, 700, "#1A2136", "left", "Bricolage Grotesque");
+  txt(x, "Etamin şablonu", M, M + 19, 3.6, 400, "#5D6476");
+  // bitmiş hali
+  const maxW = pp.w - 2 * M, maxH = pp.h * 0.5;
+  const s = Math.min(maxW / P.w, maxH / P.h); const cellPx = clamp(Math.floor(s * 7), 2, 24);
+  const img = renderWhole(P, "final", cellPx, false);
+  const dw = P.w * s, dh = P.h * s, dx = (pp.w - dw) / 2, dy = M + 26;
+  x.fillStyle = "rgba(0,0,0,.12)"; x.fillRect(dx + 0.8, dy + 0.8, dw, dh);
+  x.imageSmoothingEnabled = true; x.drawImage(img, dx, dy, dw, dh);
+  let y = dy + dh + 12;
+  pdfFacts(P).forEach(([k, v]) => { txt(x, k, M, y, 3.3, 400, "#5D6476"); txt(x, v, M + 45, y, 3.3, 500); y += 6; });
+  y += 3;
+  txt(x, "Nasıl kullanılır: işe kumaşın ortasından başla; şemanın ortası sayfalardaki kırmızı oklarla gösterilir.", M, y, 2.8, 400, "#5D6476"); y += 4.5;
+  txt(x, "Kalın çizgiler 10 karede birdir; kenarlardaki numaralar tüm şemaya göre sütun ve satırı verir.", M, y, 2.8, 400, "#5D6476");
+}
+function pdfMap(x, P, L, cols, st) {
+  const pp = L.pp, M = L.M;
+  txt(x, "Sayfa düzeni", M, M + 9, 6, 700, "#1A2136", "left", "Bricolage Grotesque");
+  txt(x, `Şema ${L.pages.length} sayfaya bölündü. Kutudaki numara, o bölümün şema sayfası numarasıdır.`, M, M + 15, 3, 400, "#5D6476");
+  const maxW = pp.w - 2 * M, maxH = pp.h - M * 2 - 40, s = Math.min(maxW / P.w, maxH / P.h);
+  const dw = P.w * s, dh = P.h * s, dx = (pp.w - dw) / 2, dy = M + 24;
+  const bm = buildBitmap(Object.assign({}, P, { done: new Uint8Array(P.cells.length).fill(1) }), cols, "final", -1, false);
+  x.globalAlpha = 0.55; x.imageSmoothingEnabled = false; x.drawImage(bm, dx, dy, dw, dh); x.globalAlpha = 1;
+  x.strokeStyle = "#1A2136"; x.lineWidth = 0.5;
+  L.pages.forEach((pg, i) => {
+    const rx = dx + pg.x0 * s, ry = dy + pg.y0 * s, rw = (pg.x1 - pg.x0) * s, rh = (pg.y1 - pg.y0) * s;
+    x.strokeRect(rx, ry, rw, rh);
+    const fs = clamp(Math.min(rw, rh) * 0.28, 3, 16);
+    x.fillStyle = "rgba(255,255,255,.85)"; const bw = fs * 1.6 + (String(i + 1).length - 1) * fs * 0.55, bh = fs * 1.3; x.fillRect(rx + rw / 2 - bw / 2, ry + rh / 2 - bh / 2, bw, bh);
+    txt(x, String(i + 1), rx + rw / 2, ry + rh / 2 + fs * 0.36, fs, 700, "#A3243A", "center");
+  });
+}
+function pdfLegendRows(P) {
+  const cnt = new Array(P.palette.length).fill(0); for (const c of P.cells) if (c !== 255) cnt[c]++;
+  const bs = new Array(P.palette.length).fill(0), kn = new Array(P.palette.length).fill(0); P.back.forEach(s => bs[s[4]]++); P.knots.forEach(k => kn[k[2]]++);
+  const use = Object.fromEntries(threadUsage(P).map(u => [u.code, u.skeins]));
+  return { cnt, bs, kn, use };
+}
+function pdfLegendPages(P, L) { const per = Math.floor((L.pp.h - L.M * 2 - 36 - 30) / 8.4); return Math.max(1, Math.ceil(P.palette.length / per)); }
+function pdfLegend(x, P, L, cols, page, pages, st) {
+  const pp = L.pp, M = L.M, rowH = 8.4, per = Math.floor((pp.h - M * 2 - 36 - 30) / rowH);
+  const { cnt, bs, kn, use } = pdfLegendRows(P), m = P.ratio === 4 ? 4 : 1;
+  txt(x, "Renk anahtarı" + (pages > 1 ? ` (${page + 1}/${pages})` : ""), M, M + 9, 6, 700, "#1A2136", "left", "Bricolage Grotesque");
+  txt(x, `DMC mulinesi. Haç ${strandsFor(P.fabric)} tel; “+” ile yazılan karışımlarda iğneye iki renkten birer tel takılır.`, M, M + 15, 3, 400, "#5D6476");
+  const X = { sym: M, code: M + 14, name: M + 44, type: M + 118, n: pp.w - M - 22, sk: pp.w - M };
+  let y = M + 27;
+  [["Simge", X.sym, "left"], ["DMC", X.code, "left"], ["Renk", X.name, "left"], ["İlmek türü", X.type, "left"], ["Haç", X.n, "right"], ["Çile", X.sk, "right"]].forEach(([t, px, a]) => txt(x, t, px, y, 2.8, 600, "#5D6476", a));
+  y += 2.5; x.fillStyle = "#1A2136"; x.fillRect(M, y, pp.w - 2 * M, 0.3); y += 1;
+  const from = page * per, to = Math.min(P.palette.length, from + per);
+  for (let i = from; i < to; i++) {
+    const p = P.palette[i], v = cols[i];
+    const bx = X.sym, by = y + 1, bsz = 6.2;
+    x.fillStyle = st.color ? v.css.tint : "#fff"; x.fillRect(bx, by, bsz, bsz); x.strokeStyle = "#555"; x.lineWidth = 0.2; x.strokeRect(bx, by, bsz, bsz);
+    if (cnt[i]) txt(x, p.sym, bx + bsz / 2, by + bsz * 0.74, 4.6, 600, st.color ? v.ink : "#111", "center");
+    // iplik rengi şeridi
+    if (p.code2) { x.fillStyle = p.hexA; x.fillRect(bx + bsz + 1.2, by, 2, bsz / 2); x.fillStyle = p.hexB; x.fillRect(bx + bsz + 1.2, by + bsz / 2, 2, bsz / 2); } else { x.fillStyle = p.hex; x.fillRect(bx + bsz + 1.2, by, 2, bsz); }
+    txt(x, palLabel(p), X.code, y + 5.6, 3.3, 600);
+    txt(x, palName(p).slice(0, 44), X.name, y + 5.6, 3.1, 400);
+    const kinds = []; if (cnt[i]) kinds.push(p.type === "h" ? "Yarım haç" : "Tam haç"); if (bs[i]) kinds.push("Backstitch"); if (kn[i]) kinds.push("Düğüm");
+    txt(x, kinds.join(", ") || "—", X.type, y + 5.6, 3, 400, "#333");
+    txt(x, cnt[i] ? fmt(cnt[i] * m) : "—", X.n, y + 5.6, 3.1, 400, "#333", "right");
+    const sk = p.code2 ? Math.max(use[p.code] || 0, 0) : use[p.code] || 0;
+    txt(x, sk ? (sk < 1 ? "1" : String(Math.ceil(sk))) : "—", X.sk, y + 5.6, 3.1, 400, "#333", "right");
+    y += rowH; x.fillStyle = "#ddd"; x.fillRect(M, y, pp.w - 2 * M, 0.2);
+  }
+  if (page === pages - 1) {
+    y += 8;
+    const bsUsed = P.palette.map((p, i) => i).filter(i => bs[i]), knUsed = P.palette.map((p, i) => i).filter(i => kn[i]);
+    if (bsUsed.length || knUsed.length) {
+      txt(x, "Ek ilmekler", M, y, 3.6, 700); y += 6;
+      bsUsed.forEach(i => { const p = P.palette[i]; x.strokeStyle = st.color ? p.hex : "#111"; x.lineWidth = 0.6; x.beginPath(); x.moveTo(M, y - 1.2); x.lineTo(M + 10, y - 1.2); x.stroke(); txt(x, `Backstitch — DMC ${palLabel(p)} ${palName(p)}, 1 tel`, M + 14, y, 3, 400); y += 5.5; });
+      knUsed.forEach(i => { const p = P.palette[i]; x.fillStyle = st.color ? p.hex : "#111"; x.beginPath(); x.arc(M + 5, y - 1.2, 1.3, 0, Math.PI * 2); x.fill(); x.strokeStyle = "#111"; x.lineWidth = 0.15; x.stroke(); txt(x, `Fransız düğümü — DMC ${palLabel(p)} ${palName(p)}, 2 tel, 2 tur`, M + 14, y, 3, 400); y += 5.5; });
+    }
+    txt(x, "Çile sayıları tahminidir ve %15 fire payı içerir (1 çile = 8 m, 6 tel).", M, y + 3, 2.7, 400, "#777");
+  }
+}
+function pdfChartPage(x, P, L, cols, st, idx) {
+  const pg = L.pages[idx], pp = L.pp, M = L.M, c = st.cell, gx = L.gx, gy = L.gy;
+  const pw = (pg.x1 - pg.x0) * c, ph = (pg.y1 - pg.y0) * c;
+  // başlık
+  txt(x, P.name, M, M + 6, 4.4, 700, "#1A2136", "left", "Bricolage Grotesque");
+  txt(x, `Şema ${idx + 1} / ${L.pages.length}`, pp.w - M, M + 6, 4.4, 700, "#A3243A", "right");
+  txt(x, `Sütun ${pg.x0 + 1}–${pg.x1}, satır ${pg.y0 + 1}–${pg.y1}${P.ratio === 4 ? " · 1 simge = 4 haç (2×2)" : ""}`, M, M + 11, 2.9, 400, "#5D6476");
+  // mini harita
+  const mw = 16, mh = mw * L.ny / L.nx > 9 ? 9 : mw * L.ny / L.nx, cw = mw / L.nx, ch = mh / L.ny, mx = pp.w - M - mw, my = M + 8;
+  for (let yy = 0; yy < L.ny; yy++) for (let xx = 0; xx < L.nx; xx++) { const on = xx === pg.px && yy === pg.py; x.fillStyle = on ? "#A3243A" : "#E3E5E9"; x.fillRect(mx + xx * cw + 0.15, my + yy * ch + 0.15, cw - 0.3, ch - 0.3); }
+  // hücreler
+  x.textAlign = "center"; x.textBaseline = "middle"; x.font = `600 ${c * 0.7}px "IBM Plex Sans","DejaVu Sans",sans-serif`;
+  for (let yy = pg.y0; yy < pg.y1; yy++) for (let xx = pg.x0; xx < pg.x1; xx++) {
+    const ci = P.cells[yy * P.w + xx]; if (ci === 255) continue;
+    const px = gx + (xx - pg.x0) * c, py = gy + (yy - pg.y0) * c;
+    if (st.color) { x.fillStyle = cols[ci].css.tint; x.fillRect(px, py, c + 0.02, c + 0.02); }
+    x.fillStyle = st.color ? cols[ci].ink : "#111"; x.fillText(P.palette[ci].sym, px + c / 2, py + c / 2 + c * 0.04);
+  }
+  // ızgara
+  x.fillStyle = "#9AA0AA";
+  for (let xx = pg.x0; xx <= pg.x1; xx++) if (xx % 10) x.fillRect(gx + (xx - pg.x0) * c - 0.06, gy, 0.12, ph);
+  for (let yy = pg.y0; yy <= pg.y1; yy++) if (yy % 10) x.fillRect(gx, gy + (yy - pg.y0) * c - 0.06, pw, 0.12);
+  x.fillStyle = "#1A1A1A";
+  for (let xx = Math.ceil(pg.x0 / 10) * 10; xx <= pg.x1; xx += 10) x.fillRect(gx + (xx - pg.x0) * c - 0.2, gy, 0.4, ph);
+  for (let yy = Math.ceil(pg.y0 / 10) * 10; yy <= pg.y1; yy += 10) x.fillRect(gx, gy + (yy - pg.y0) * c - 0.2, pw, 0.4);
+  x.strokeStyle = "#1A1A1A"; x.lineWidth = 0.4; x.strokeRect(gx, gy, pw, ph);
+  // backstitch ve düğümler (sayfa alanına kırpılmış)
+  x.save(); x.beginPath(); x.rect(gx, gy, pw, ph); x.clip();
+  const hs = c / 2, ox = gx - pg.x0 * c, oy = gy - pg.y0 * c;
+  x.lineCap = "round";
+  for (const sg of P.back) { const p = P.palette[sg[4]]; if (!p) continue; x.strokeStyle = st.color ? p.hex : "#111"; x.lineWidth = Math.max(0.35, c * 0.15); x.beginPath(); x.moveTo(ox + sg[0] * hs, oy + sg[1] * hs); x.lineTo(ox + sg[2] * hs, oy + sg[3] * hs); x.stroke(); if (st.color && lum(hexToRgb(p.hex)) > 0.6) { x.strokeStyle = "rgba(0,0,0,.5)"; x.lineWidth = 0.12; x.stroke(); } }
+  for (const k of P.knots) { const p = P.palette[k[2]]; if (!p) continue; x.beginPath(); x.arc(ox + k[0] * hs, oy + k[1] * hs, c * 0.28, 0, Math.PI * 2); x.fillStyle = st.color ? p.hex : "#111"; x.fill(); x.strokeStyle = "#111"; x.lineWidth = 0.15; x.stroke(); }
+  x.restore();
+  // cetveller (tüm şemaya göre numara)
+  for (let xx = Math.ceil(pg.x0 / 10) * 10; xx <= pg.x1; xx += 10) { txt(x, String(xx), gx + (xx - pg.x0) * c, gy - 1.6, 2.6, 500, "#333", "center"); }
+  for (let yy = Math.ceil(pg.y0 / 10) * 10; yy <= pg.y1; yy += 10) { txt(x, String(yy), gx - 1.4, gy + (yy - pg.y0) * c + 0.9, 2.6, 500, "#333", "right"); }
+  // orta oklar
+  x.fillStyle = "#A3243A";
+  const cxm = P.w / 2, cym = P.h / 2;
+  if (cxm >= pg.x0 && cxm <= pg.x1) { const ax = gx + (cxm - pg.x0) * c; x.beginPath(); x.moveTo(ax - 1.6, gy - 6.2); x.lineTo(ax + 1.6, gy - 6.2); x.lineTo(ax, gy - 4.2); x.fill(); x.beginPath(); x.moveTo(ax - 1.6, gy + ph + 2.6); x.lineTo(ax + 1.6, gy + ph + 2.6); x.lineTo(ax, gy + ph + 0.6); x.fill(); }
+  if (cym >= pg.y0 && cym <= pg.y1) { const ay = gy + (cym - pg.y0) * c; x.beginPath(); x.moveTo(gx - 6.6, ay - 1.6); x.lineTo(gx - 6.6, ay + 1.6); x.lineTo(gx - 4.6, ay); x.fill(); x.beginPath(); x.moveTo(gx + pw + 2.6, ay - 1.6); x.lineTo(gx + pw + 2.6, ay + 1.6); x.lineTo(gx + pw + 0.6, ay); x.fill(); }
+}
+/* ---------- başlat ---------- */
+$("#homeBtn").onclick = () => show("list");
+$("#newBtn").onclick = () => openNew(null);
+$("#emptyNew").onclick = () => openNew(null);
+initNewForm(); bindWork();
+window.addEventListener("resize", () => { if (App.view === "new") drawPreview(); });
+(async () => { await Store.init(); startList(); })();
+</script>
+</body>
+</html>
