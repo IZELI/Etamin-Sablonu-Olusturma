@@ -280,7 +280,7 @@ body.fs .fs-row select{flex:1}
     <div>
       <h1>Çalışmalarım</h1>
       <p>Her şablonun ilerlemesi ayrı tutulur. Aynı bağlantıyı başka bir cihazda açtığında kaldığın yerden devam edersin.</p>
-      <p class="small muted" style="margin-top:4px" id="appVer">Sürüm 2.1 · gerçek tam ekran, kenardan açılan renk paneli</p>
+      <p class="small muted" style="margin-top:4px" id="appVer">Sürüm 2.2 · Milena Stil kalitesine göre ayarlanmış ölçü ve renk önerisi</p>
     </div>
     <div class="head-actions"><button class="btn" id="importBtn">Dosyadan içe aktar</button><button class="btn" id="backupBtn">Tümünü yedekle</button><input type="file" id="importFile" accept=".json,application/json" hidden></div>
   </div>
@@ -841,14 +841,14 @@ function suggestColors(px, cells) {
   const rnd = mulberry(7);
   const idx = pickSample(px.mask, 4000, rnd);
   if (idx.length < 10) return { k: 2, err: 0 };
-  const ks = [3, 4, 6, 8, 10, 12, 15, 18, 22, 26, 30, 36, 44, 52, 60];
+  const ks = [3, 4, 6, 8, 10, 12, 15, 18, 22, 26, 30, 36, 40, 44, 48, 52, 60];
   const cap = clamp(Math.round(Math.sqrt(cells) * 0.55), 6, 80);
   let pick = null, last = null;
   for (const k of ks) {
     if (k > cap) break;
     const r = kmeans(px.lab, idx, k, 6, mulberry(11));
     last = { k, err: r.err };
-    if (r.err <= 4.6) { pick = last; break; }
+    if (r.err <= 3.8) { pick = last; break; } // Milena Stil örneğindeki ~40-45 renklik ton geçişine denk
   }
   return pick || last || { k: Math.min(cap, 24), err: 0 };
 }
@@ -1174,7 +1174,7 @@ function buildPattern(px, dims, S, px2) {
 // Resmi farklı şema genişliklerine indirip ne kadar ayrıntı kaybolduğunu ölçer.
 function analyzeDetail(img) {
   const iw = img.naturalWidth, ih = img.naturalHeight;
-  const k = Math.min(1, 360 / Math.max(iw, ih));
+  const k = Math.min(1, 720 / Math.max(iw, ih));
   const w = Math.max(8, Math.round(iw * k)), h = Math.max(8, Math.round(ih * k));
   const c = document.createElement("canvas"); c.width = w; c.height = h;
   const x = c.getContext("2d", { willReadFrequently: true }); x.imageSmoothingQuality = "high";
@@ -1188,7 +1188,7 @@ function analyzeDetail(img) {
     for (let y = 0; y < h; y++) for (let xx = 0; xx < w; xx++) for (let ch = 0; ch < 3; ch++) { const a = xx > 0 ? xx - 1 : xx, b = xx < w - 1 ? xx + 1 : xx; T[(y * w + xx) * 3 + ch] = (L[(y * w + a) * 3 + ch] + L[(y * w + xx) * 3 + ch] + L[(y * w + b) * 3 + ch]) / 3; }
     for (let y = 0; y < h; y++) for (let xx = 0; xx < w; xx++) for (let ch = 0; ch < 3; ch++) { const a = y > 0 ? y - 1 : y, b = y < h - 1 ? y + 1 : y; L[(y * w + xx) * 3 + ch] = (T[(a * w + xx) * 3 + ch] + T[(y * w + xx) * 3 + ch] + T[(b * w + xx) * 3 + ch]) / 3; }
   }
-  const widths = [30, 40, 50, 60, 70, 80, 90, 100, 120, 140, 160, 180, 200, 240, 280, 320].filter(v => v < w || v === 30);
+  const widths = [30, 40, 50, 60, 70, 80, 90, 100, 120, 140, 160, 180, 200, 220, 240, 260, 280, 300, 320, 340, 360, 380, 400, 420, 450].filter(v => v < w * 0.8 || v === 30);
   const curve = [];
   for (const W of widths) {
     const H = Math.max(2, Math.round(W * h / w)), S = new Float64Array(W * H * 3), N = new Float64Array(W * H);
@@ -1201,11 +1201,15 @@ function analyzeDetail(img) {
     curve.push([W, e / n]);
   }
   const e0 = curve[0][1] || 1e-6;
-  const at = r => { for (const [W, e] of curve) if (e <= e0 * r) return W; return null; };
+  // Eşikler, Milena Stil "Yıldızlı Gece" işlenmiş örneğine göre ayarlandı:
+  // ~380 ilmek genişlikte kalan ayrıntı hatası ΔE ≈ 1,9 idi (göze kusursuz görünen kalite).
+  const IDEAL_DE = 1.9, MIN_DE = 3.2;
+  const at = t => { for (const [W, e] of curve) if (e <= t) return W; return null; };
+  const maxW = Math.min(450, iw);
   // küçük (piksel sanatı benzeri) resimlerde her piksel bir ilmek olsun
   if (iw <= 160 && ih <= 160) return { min: iw, ideal: iw, pixel: true, curve, e0 };
-  let mn = at(0.5) || Math.min(320, iw), ide = at(0.28) || Math.min(320, iw);
-  mn = clamp(mn, 40, 300); ide = clamp(Math.max(ide, mn + 20), 60, 320);
+  let mn = at(MIN_DE) || maxW, ide = at(IDEAL_DE) || maxW;
+  mn = clamp(mn, 40, 400); ide = clamp(Math.max(ide, mn + 20), 60, 450);
   ide = Math.min(ide, iw); mn = Math.min(mn, ide);
   return { min: mn, ideal: ide, pixel: false, curve, e0 };
 }
