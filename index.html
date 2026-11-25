@@ -280,7 +280,7 @@ body.fs .fs-row select{flex:1}
     <div>
       <h1>Çalışmalarım</h1>
       <p>Her şablonun ilerlemesi ayrı tutulur. Aynı bağlantıyı başka bir cihazda açtığında kaldığın yerden devam edersin.</p>
-      <p class="small muted" style="margin-top:4px" id="appVer">Sürüm 2.3 · gerçekçi işlenmiş önizleme, tablolarda yarım haç azaltıldı</p>
+      <p class="small muted" style="margin-top:4px" id="appVer">Sürüm 2.4 · önizlemede kumaş kaplaması ve benekli karışık renkler</p>
     </div>
     <div class="head-actions"><button class="btn" id="importBtn">Dosyadan içe aktar</button><button class="btn" id="backupBtn">Tümünü yedekle</button><input type="file" id="importFile" accept=".json,application/json" hidden></div>
   </div>
@@ -1342,7 +1342,7 @@ function renderWhole(P, mode, cellPx, withGrid) {
     if (cellPx >= 8) { x.fillStyle = "rgba(0,0,0,.05)"; for (let i = 0; i <= P.w * (P.ratio === 4 ? 2 : 1); i++) x.fillRect(i * cellPx / (P.ratio === 4 ? 2 : 1) - .5, 0, 1, c.height); for (let i = 0; i <= P.h * (P.ratio === 4 ? 2 : 1); i++) x.fillRect(0, i * cellPx / (P.ratio === 4 ? 2 : 1) - .5, c.width, 1); }
     drawStitches(x, Object.assign({}, P, { done: new Uint8Array(P.cells.length).fill(1) }), cols, 0, 0, cellPx, 0, 0, P.w, P.h, {});
   } else if (mode === "final") {
-    x.imageSmoothingEnabled = false; x.drawImage(buildBitmap(Object.assign({}, P, { done: new Uint8Array(P.cells.length).fill(1) }), cols, "final", -1, false), 0, 0, c.width, c.height);
+    x.putImageData(finalLook(P, cellPx), 0, 0);
   } else {
     x.font = `600 ${Math.floor(cellPx * 0.7)}px "IBM Plex Sans","DejaVu Sans",sans-serif`; x.textAlign = "center"; x.textBaseline = "middle";
     for (let y = 0; y < P.h; y++) for (let xx = 0; xx < P.w; xx++) {
@@ -1355,6 +1355,32 @@ function renderWhole(P, mode, cellPx, withGrid) {
   if (mode !== "final" && P.blocks) drawBlocks(x, P, cols, 0, 0, cellPx, 0, 0, P.w, P.h, { sym: cellPx >= 6, inset: withGrid && cellPx >= 6 ? 0.5 : 0 });
   drawExtras(x, P, cols, 0, 0, cellPx);
   return c;
+}
+
+// Uzaktan bakıldığında işin gerçek görünümü: ilmeklerin arasından kumaş biraz görünür,
+// iki telli karışık renkler tek bir ara ton değil, iki rengin benekli karışımıdır.
+function finalLook(P, cellPx) {
+  const W = P.w * cellPx, H = P.h * cellPx, img = new ImageData(W, H), d = img.data;
+  // Delikler gölgede kaldığı için kumaş gerçekte az görünür; oranlar işlenmiş örnek fotoğrafına göre ayarlandı.
+  const fab = hexToRgb(P.fabric.color || "#FAFAF6");
+  const st = strandsFor(P.fabric), cover = st >= 3 ? 0.95 : st === 2 ? 0.92 : 0.85; // tel sayısına göre kumaşı örtme oranı
+  const lin = h => hexToRgb(h);
+  const pal = P.palette.map(p => {
+    const cv = p.type === "h" ? 0.62 : cover;
+    const mixF = c => c.map((v, k) => v * cv + fab[k] * (1 - cv));
+    return p.code2 ? { a: mixF(lin(p.hexA)), b: mixF(lin(p.hexB)) } : { a: mixF(lin(p.hex)), b: null };
+  });
+  const fabS = fab;
+  for (let y = 0; y < H; y++) {
+    const cy = (y / cellPx) | 0;
+    for (let x = 0; x < W; x++) {
+      const ci = P.cells[cy * P.w + ((x / cellPx) | 0)], o = (y * W + x) * 4;
+      let c = fabS;
+      if (ci !== 255) { const e = pal[ci]; c = e.a; if (e.b) { let h = Math.imul(x * 73856093 ^ y * 19349663, 0x9E3779B1); h ^= h >>> 15; if (h & 1) c = e.b; } }
+      d[o] = c[0]; d[o + 1] = c[1]; d[o + 2] = c[2]; d[o + 3] = 255;
+    }
+  }
+  return img;
 }
 
 function gridLines(ctx, P, ox, oy, s, W, H, strength) {
