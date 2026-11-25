@@ -280,7 +280,7 @@ body.fs .fs-row select{flex:1}
     <div>
       <h1>Çalışmalarım</h1>
       <p>Her şablonun ilerlemesi ayrı tutulur. Aynı bağlantıyı başka bir cihazda açtığında kaldığın yerden devam edersin.</p>
-      <p class="small muted" style="margin-top:4px" id="appVer">Sürüm 2.4 · önizlemede kumaş kaplaması ve benekli karışık renkler</p>
+      <p class="small muted" style="margin-top:4px" id="appVer">Sürüm 2.5 · içe aktarılan dosyalar için güvenlik denetimi</p>
     </div>
     <div class="head-actions"><button class="btn" id="importBtn">Dosyadan içe aktar</button><button class="btn" id="backupBtn">Tümünü yedekle</button><input type="file" id="importFile" accept=".json,application/json" hidden></div>
   </div>
@@ -457,6 +457,16 @@ const ANCHOR_RAW="1|Snow White|fdfbff;2|White|fafafa;6|Salmon - VY LT|fbbba7;8|S
 /* ============ yardımcılar ============ */
 const $ = (s, r = document) => r.querySelector(s);
 const $$ = (s, r = document) => [...r.querySelectorAll(s)];
+// Güvenlik: dışarıdan gelen (içe aktarılan / senkronlanan) verideki renkler ve resimler yalnızca beklenen biçimde kabul edilir
+const safeHex = h => /^#[0-9a-f]{6}$/i.test(h) ? h : "#888888";
+const safeImg = u => typeof u === "string" && /^data:image\/(png|jpe?g|webp|gif);base64,[a-z0-9+/=\s]*$/i.test(u) ? u : "";
+const safeStr = (v, n) => typeof v === "string" ? v.slice(0, n) : "";
+function cleanPal(p) {
+  p = p && typeof p === "object" ? p : {};
+  return Object.assign({}, p, { brand: p.brand === "anchor" ? "anchor" : "dmc", code: safeStr(p.code, 16), code2: p.code2 ? safeStr(p.code2, 16) : null,
+    name: safeStr(p.name, 60), name2: p.name2 ? safeStr(p.name2, 60) : null, hex: safeHex(p.hex), hexA: safeHex(p.hexA || p.hex), hexB: p.hexB ? safeHex(p.hexB) : null,
+    type: ["x", "h"].includes(p.type) ? p.type : "x", sym: safeStr(p.sym, 4) });
+}
 const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
 const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
 const fmt = n => Math.round(n).toLocaleString("tr-TR");
@@ -1479,7 +1489,7 @@ function threadPicker({ title, entry, allowType = true, brand }) {
     const q = wrap.querySelector("#tpQ").value.trim().toLocaleLowerCase("tr");
     const cur = slot === "A" ? A : B;
     const items = THREADS[br].filter(d => !q || d.code.toLowerCase().includes(q) || d.name.toLocaleLowerCase("tr").includes(q)).slice(0, 160);
-    wrap.querySelector("#tpList").innerHTML = items.map(d => `<button data-c="${esc(d.code)}" class="${d.code === cur ? "on" : ""}"><i style="background:${d.hex}"></i><b>${esc(d.code)}</b><span class="muted">${esc(d.name)}</span></button>`).join("") || `<p class="small muted" style="padding:8px">Eşleşen iplik yok.</p>`;
+    wrap.querySelector("#tpList").innerHTML = items.map(d => `<button data-c="${esc(d.code)}" class="${d.code === cur ? "on" : ""}"><i style="background:${safeHex(d.hex)}"></i><b>${esc(d.code)}</b><span class="muted">${esc(d.name)}</span></button>`).join("") || `<p class="small muted" style="padding:8px">Eşleşen iplik yok.</p>`;
   };
   wrap.addEventListener("click", e => {
     const t = e.target.closest("button"); if (!t) return;
@@ -1507,7 +1517,7 @@ function renderList() {
     const f = d.fabric || {}; const per = spi(f); const m = d.ratio === 4 ? 2 : 1;
     const wcm = d.w * m / per * 2.54, hcm = d.h * m / per * 2.54;
     const when = d.lastWorked ? new Date(d.lastWorked).toLocaleDateString("tr-TR", { day: "numeric", month: "short" }) : "—";
-    return `<button class="card" data-id="${esc(id.slice(4))}"><div class="thumb">${d.thumb ? `<img src="${esc(d.thumb)}" alt="">` : ""}</div>
+    return `<button class="card" data-id="${esc(id.slice(4))}"><div class="thumb">${safeImg(d.thumb) ? `<img src="${esc(d.thumb)}" alt="">` : ""}</div>
       <div class="body"><h3>${esc(d.name || "Adsız çalışma")}</h3>
       <div class="small muted">${fmt1(wcm)} × ${fmt1(hcm)} cm, ${(d.palette || []).length} renk, ${ratioLabel(d.ratio)}</div>
       <div class="bar"><i style="width:${pct}%"></i></div>
@@ -1712,7 +1722,7 @@ function updateStats() {
     parts.push(a.knots ? `${fmt(a.knots)} Fransız düğümü eklendi` : "düğüm gerektiren nokta yok");
     sum.textContent = "Karar: " + parts.join("; ") + "."; sum.classList.remove("hidden");
   } else sum.classList.add("hidden");
-  $("#palMini").innerHTML = P.palette.map(p => `<i title="${esc(palFull(p) + " " + palName(p))}" style="background:${p.code2 ? `linear-gradient(135deg,${p.hexA} 50%,${p.hexB} 50%)` : p.hex}"></i>`).join("");
+  $("#palMini").innerHTML = P.palette.map(p => `<i title="${esc(palFull(p) + " " + palName(p))}" style="background:${p.code2 ? `linear-gradient(135deg,${safeHex(p.hexA)} 50%,${safeHex(p.hexB)} 50%)` : safeHex(p.hex)}"></i>`).join("");
   let w = ""; if (d.clamped) w += `<div class="warn">Şema ${fmt(MAX_CELLS)} kare sınırına göre küçültüldü. Daha büyük iş için 1:4 ölçeğini ya da daha seyrek kumaşı dene.</div>`;
   if (d.cw < 30) w += `<div class="warn">Şema çok küçük; ayrıntılar kaybolabilir. Genişliği artırmayı düşün.</div>`;
   $("#warnBox").innerHTML = w;
@@ -1773,7 +1783,7 @@ const Work = {
   close() { if (this.P) this.flush(); this.unsubs.forEach(u => { try { u(); } catch (e) {} }); this.unsubs = []; this.P = null; },
   fromDocs(id, prj, pat) {
     const n = prj.w * prj.h;
-    return { id, name: prj.name, w: prj.w, h: prj.h, ratio: prj.ratio, fabric: prj.fabric, margin: prj.margin, settings: prj.settings, palette: (prj.palette || []).map(p => Object.assign({}, p)),
+    return { id, name: prj.name, w: prj.w, h: prj.h, ratio: prj.ratio, fabric: prj.fabric, margin: prj.margin, settings: prj.settings, palette: (Array.isArray(prj.palette) ? prj.palette : []).map(cleanPal),
       log: Object.assign({}, prj.log || {}), parks: chunk(prj.parks || [], 3), notes: prj.notes || "", photos: (prj.photos || []).slice(),
       cells: decodeCells(pat.cells, n), done: decodeBits(prj.done, n), back: chunk(pat.back, 5), knots: chunk(pat.knots, 3), blocks: pat.blocks ? decodeBits(pat.blocks, Math.ceil(prj.w / 2) * Math.ceil(prj.h / 2)) : null, rev: pat.rev || 1, updatedAt: prj.updatedAt || 0, createdAt: prj.createdAt, lastWorked: prj.lastWorked };
   },
@@ -1782,7 +1792,7 @@ const Work = {
     if (!d) { toast("Bu çalışma başka bir cihazdan silindi."); show("list"); return; }
     if (d.by === DEVICE || (d.updatedAt || 0) <= P.updatedAt || this.tProg || this.tPat || this.inflight) return;
     if (d.w !== P.w || d.h !== P.h) { this.open(P.id); return; }
-    P.done = decodeBits(d.done, P.w * P.h); P.palette = (d.palette || []).map(p => Object.assign({}, p)); P.name = d.name; P.updatedAt = d.updatedAt;
+    P.done = decodeBits(d.done, P.w * P.h); P.palette = (Array.isArray(d.palette) ? d.palette : []).map(cleanPal); P.name = d.name; P.updatedAt = d.updatedAt;
     P.fabric = d.fabric; P.settings = d.settings; P.margin = d.margin; P.log = Object.assign({}, d.log || {}); P.parks = chunk(d.parks || [], 3); P.photos = (d.photos || []).slice();
     if (document.activeElement && document.activeElement.id !== "notesIn") P.notes = d.notes || ""; P._lastDone = this.stats().doneCount;
     this.recolor(); this.dirty(); this.renderPanels();
@@ -2051,7 +2061,7 @@ const Work = {
     const P = this.P; if (!P || !this.counts) return; const { t, d, bs, kn } = this.counts; const m = P.ratio === 4 ? 4 : 1;
     $("#legend").innerHTML = P.palette.map((p, i) => {
       const v = this.cols[i]; const pct = t[i] ? d[i] / t[i] * 100 : 0;
-      const sw = p.code2 ? `background:linear-gradient(135deg,${p.hexA} 50%,${p.hexB} 50%)` : `background:${p.hex}`;
+      const sw = p.code2 ? `background:linear-gradient(135deg,${safeHex(p.hexA)} 50%,${safeHex(p.hexB)} 50%)` : `background:${safeHex(p.hex)}`;
       const tags = (p.type === "h" && t[i] ? `<span class="tag">yarım</span>` : "") + (bs[i] ? `<span class="tag">BS</span>` : "") + (kn[i] ? `<span class="tag">düğüm</span>` : "");
       return `<button class="lg ${i === this.sel ? "sel" : ""}" data-i="${i}" aria-pressed="${i === this.sel}">
         <span class="sw" style="${sw};color:${v.inkBase}">${t[i] ? esc(p.sym) : ""}</span>
@@ -2090,7 +2100,7 @@ const Work = {
       <dt>Bitmiş boyut</dt><dd>${fmt1(wcm)} × ${fmt1(hcm)} cm</dd><dt>Kesilecek kumaş</dt><dd>${fmt1(wcm + 2 * mg)} × ${fmt1(hcm + 2 * mg)} cm</dd>
       <dt>Tel sayısı</dt><dd>Haç ${strandsFor(f)} tel, kontur 1 tel</dd></dl>
       <button class="btn" id="revise" style="width:100%;margin-top:12px">Ölçü ve ayarları revize et</button></div>
-      <div class="section"><h3>Malzeme listesi</h3><table class="mat"><tr><th>İplik</th><th>Renk</th><th class="r">Çile</th></tr>${use.map(u => `<tr><td><span style="display:inline-block;width:12px;height:12px;border-radius:2px;background:${u.hex};vertical-align:-1px;border:1px solid rgba(0,0,0,.2)"></span> ${esc(u.brandName)} ${esc(u.code)}</td><td>${esc(u.name)}</td><td class="r">${u.skeins < 1 ? "< 1" : fmt1(u.skeins)}</td></tr>`).join("")}</table>
+      <div class="section"><h3>Malzeme listesi</h3><table class="mat"><tr><th>İplik</th><th>Renk</th><th class="r">Çile</th></tr>${use.map(u => `<tr><td><span style="display:inline-block;width:12px;height:12px;border-radius:2px;background:${safeHex(u.hex)};vertical-align:-1px;border:1px solid rgba(0,0,0,.2)"></span> ${esc(u.brandName)} ${esc(u.code)}</td><td>${esc(u.name)}</td><td class="r">${u.skeins < 1 ? "< 1" : fmt1(u.skeins)}</td></tr>`).join("")}</table>
       <p class="small muted">Tahminidir; %15 fire payı dahildir. Bir çile 8 m, 6 tel.</p></div>
       <div class="section stack"><h3>Dışa aktar</h3><button class="btn primary" id="exPdf">Yazdırılabilir PDF indir</button><button class="btn" id="exChart">Şemayı PNG olarak indir</button><button class="btn" id="exKey">Renk anahtarını PNG olarak indir</button><button class="btn" id="exCsv">Malzeme listesini CSV olarak indir</button><button class="btn" id="exShare">Paylaşım / yedek dosyası indir</button></div>
       <div class="section"><h3>Cihazlar arası takip</h3><p class="small muted" style="margin:0">${syncTxt}</p></div>
@@ -2655,12 +2665,16 @@ $("#importFile").onchange = async e => {
   if (!data || data.app !== "ilmek" || !Array.isArray(data.projects)) { toast("Bu dosya bir İlmek şablonu değil."); return; }
   const names = new Set(App.projects.map(p => p.data.name)); let n = 0;
   for (const it of data.projects) {
-    if (!it || !it.prj || !it.pat || it.prj.kind !== "project" || !it.pat.cells) continue;
-    const id = uid(), now = Date.now(), prj = Object.assign({}, it.prj, { updatedAt: now, by: DEVICE, createdAt: it.prj.createdAt || now });
+    if (!it || !it.prj || !it.pat || it.prj.kind !== "project" || typeof it.pat.cells !== "string") continue;
+    const w = it.prj.w, h = it.prj.h;
+    if (!Number.isInteger(w) || !Number.isInteger(h) || w < 1 || h < 1 || w > 2000 || h > 2000 || w * h > 600000) continue;
+    const id = uid(), now = Date.now(), prj = Object.assign({}, it.prj, { updatedAt: now, by: DEVICE, createdAt: Number(it.prj.createdAt) || now,
+      name: safeStr(it.prj.name, 60) || "İçe aktarılan şablon", notes: safeStr(it.prj.notes, 20000), photos: [],
+      palette: (Array.isArray(it.prj.palette) ? it.prj.palette : []).map(cleanPal), thumb: safeImg(it.prj.thumb) });
     if (names.has(prj.name)) prj.name = (prj.name + " (içe aktarılan)").slice(0, 60);
     try {
-      if (it.img && it.img.src) await Store.set("img_" + id, { kind: "image", src: it.img.src });
-      await Store.set("pat_" + id, Object.assign({}, it.pat, { kind: "pattern", by: DEVICE }));
+      if (it.img && safeImg(it.img.src)) await Store.set("img_" + id, { kind: "image", src: it.img.src });
+      await Store.set("pat_" + id, Object.assign({}, it.pat, { kind: "pattern", by: DEVICE }, Array.isArray(it.pat.palette) ? { palette: it.pat.palette.map(cleanPal) } : {}));
       await Store.set("prj_" + id, prj); n++;
     } catch (err) { writeErr(err); break; }
   }
